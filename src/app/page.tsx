@@ -31,7 +31,7 @@ export default function Home() {
     } else {
       setIsLoading(true);
       setIsWaitingForResponse(true);
-      setMessages((prev) => [...prev, { type: "user", content: message }]);
+      setMessages((_) => [{ type: "user", content: message }]);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
