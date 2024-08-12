@@ -2,6 +2,7 @@ import { FaArrowLeft, FaSpinner } from "react-icons/fa";
 import { ChatBox } from "@/components/ChatBox";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
 import { Message } from "@/types/message";
+import ReactMarkdown from "react-markdown";
 
 interface ChatInterfaceProps {
   messages: Message[];
@@ -46,7 +47,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <p className="font-medium mb-1">
                   {message.type === "user" ? "Question:" : "Response:"}
                 </p>
-                <p>{message.content}</p>
+                <ReactMarkdown className="prose max-w-none">
+                  {message.content}
+                </ReactMarkdown>
               </div>
             ))}
           </div>
