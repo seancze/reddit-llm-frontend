@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-between sm:py-12">
       <Head>
-        <title>Climate Chat AI</title>
+        <title>LLM AI for Reddit</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
