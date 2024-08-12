@@ -38,7 +38,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
         <button
           type="submit"
           className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            isLoading ? "bg-gray-400" : " bg-cyan-500 hover:bg-cyan-600 "
           }`}
           disabled={isLoading}
         >
