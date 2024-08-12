@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaSpinner } from "react-icons/fa";
 import { Logo } from "@/components/Logo";
 import { Description } from "@/components/Description";
 import { ExampleQuestions } from "@/components/ExampleQuestions";
@@ -9,13 +10,13 @@ import { ChatBox } from "@/components/ChatBox";
 import { ChatHistory } from "@/components/ChatHistory";
 import { Message } from "@/types/message";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
-import { generateText } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [showInitialContent, setShowInitialContent] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -23,24 +24,51 @@ export default function Home() {
     }
   }, [messages]);
 
-  const handleSendMessage = async (message: string) => {
-    const openai = createOpenAI({
-      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-    });
-    const { text } = await generateText({
-      // '!' is used to force unwrap the value; we can do this because we know the value is set
-      model: openai(process.env.NEXT_PUBLIC_OPENAI_MODEL!),
-      system: "You are a friendly assistant!",
-      prompt: message,
-    });
-    setMessages([
-      { type: "user", content: message },
-      {
-        type: "bot",
-        content: text,
+  const handleSendMessage = useCallback(async (message: string) => {
+    setIsLoading(true);
+    setIsWaitingForResponse(true);
+    setMessages((prev) => [...prev, { type: "user", content: message }]);
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ]);
-  };
+      body: JSON.stringify({ prompt: message }),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = response.body;
+    if (!data) {
+      setIsLoading(false);
+      setIsWaitingForResponse(false);
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let botMessage = "";
+
+    setMessages((prev) => [...prev, { type: "bot", content: "" }]);
+    setIsWaitingForResponse(false);
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      botMessage += chunkValue;
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        { type: "bot", content: botMessage },
+      ]);
+    }
+
+    setIsLoading(false);
+  }, []);
 
   const handleBackClick = () => {
     setShowInitialContent(true);
@@ -76,6 +104,11 @@ export default function Home() {
               </>
             )}
             <ChatHistory messages={messages} />
+            {isWaitingForResponse && (
+              <div className="flex justify-center items-center my-4">
+                <FaSpinner className="animate-spin text-blue-500 text-4xl" />
+              </div>
+            )}
             {messages.length > 0 && <FeedbackButtons />}
           </div>
         </div>
@@ -87,6 +120,7 @@ export default function Home() {
             value={inputValue}
             onChange={setInputValue}
             onSend={handleSendMessage}
+            isLoading={isLoading}
           />
         </div>
       </div>

@@ -1,20 +1,23 @@
 import React from "react";
 import { FaPaperPlane } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 
 interface ChatBoxProps {
   value: string;
   onChange: (value: string) => void;
-  onSend: (value: string) => void;
+  onSend: (message: string) => void;
+  isLoading: boolean;
 }
 
 export const ChatBox: React.FC<ChatBoxProps> = ({
   value,
   onChange,
   onSend,
-}) => {
+  isLoading,
+}: ChatBoxProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (value.trim()) {
+    if (value.trim() && !isLoading) {
       onSend(value);
       onChange("");
     }
@@ -34,9 +37,16 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
         />
         <button
           type="submit"
-          className="absolute right-2 p-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+          }`}
+          disabled={isLoading}
         >
-          <FaPaperPlane className="w-5 h-5" />
+          {isLoading ? (
+            <FaSpinner className="w-5 h-5 animate-spin" />
+          ) : (
+            <FaPaperPlane className="w-5 h-5" />
+          )}
         </button>
       </div>
     </form>
