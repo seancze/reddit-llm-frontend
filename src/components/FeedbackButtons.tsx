@@ -6,9 +6,7 @@ export const FeedbackButtons = () => {
         <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2">
           😊 Yes
         </button>
-        <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2">
-          😐 Unsure
-        </button>
+
         <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2">
           😞 No
         </button>
