@@ -10,6 +10,7 @@ import { ChatBox } from "@/components/ChatBox";
 import { ChatHistory } from "@/components/ChatHistory";
 import { Message } from "@/types/message";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
+import { PLACEHOLDER_RESPONSE } from "@/utils/constants";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -25,46 +26,55 @@ export default function Home() {
   }, [messages]);
 
   const handleSendMessage = useCallback(async (message: string) => {
-    setIsLoading(true);
-    setIsWaitingForResponse(true);
-    setMessages((prev) => [...prev, { type: "user", content: message }]);
-
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt: message }),
-    });
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    const data = response.body;
-    if (!data) {
-      setIsLoading(false);
-      setIsWaitingForResponse(false);
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let botMessage = "";
-
-    setMessages((prev) => [...prev, { type: "bot", content: "" }]);
-    setIsWaitingForResponse(false);
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      botMessage += chunkValue;
-      setMessages((prev) => [
-        ...prev.slice(0, -1),
-        { type: "bot", content: botMessage },
+    if (process.env.NODE_ENV === "development") {
+      setMessages([
+        { type: "user", content: message },
+        {
+          type: "bot",
+          content: PLACEHOLDER_RESPONSE,
+        },
       ]);
+    } else {
+      setIsLoading(true);
+      setIsWaitingForResponse(true);
+      setMessages((prev) => [...prev, { type: "user", content: message }]);
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: message }),
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = response.body;
+      if (!data) {
+        setIsLoading(false);
+        setIsWaitingForResponse(false);
+        return;
+      }
+
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let botMessage = "";
+
+      setMessages((prev) => [...prev, { type: "bot", content: "" }]);
+      setIsWaitingForResponse(false);
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+        botMessage += chunkValue;
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          { type: "bot", content: botMessage },
+        ]);
+      }
     }
 
     setIsLoading(false);
