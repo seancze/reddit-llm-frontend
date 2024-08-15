@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Message } from "@/types/message";
-import { PLACEHOLDER_RESPONSE } from "@/utils/constants";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 
