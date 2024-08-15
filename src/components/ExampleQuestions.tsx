@@ -6,10 +6,10 @@ export const ExampleQuestions = ({
   onQuestionClick,
 }: ExampleQuestionsProps) => {
   const questions = [
-    "What is 2+2?",
-    "Should I get solar panels for my home?",
-    "How hot is the sun?",
-    "What is the meaning of life?",
+    "What are the key challenges that youths face?",
+    "Categorise all posts and provide a percentage breakdown of each category.",
+    "What are the top 3 most popular posts?",
+    "What do JC students rant about?",
   ];
 
   return (
