@@ -20,67 +20,57 @@ export default function Home() {
   }, [messages]);
 
   const handleSendMessage = useCallback(async (message: string) => {
-    if (process.env.NODE_ENV === "development") {
-      setMessages([
-        { type: "user", content: message },
-        {
-          type: "bot",
-          content: PLACEHOLDER_RESPONSE,
+    setIsLoading(true);
+    setIsWaitingForResponse(true);
+    setMessages((_) => [{ type: "user", content: message }]);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
-    } else {
-      setIsLoading(true);
-      setIsWaitingForResponse(true);
-      setMessages((_) => [{ type: "user", content: message }]);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query: message }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(response.statusText);
+        body: JSON.stringify({ query: message }),
       }
+    );
 
-      const data = response.body;
-      if (!data) {
-        setIsLoading(false);
-        setIsWaitingForResponse(false);
-        return;
-      }
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-      const reader = data.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let botMessage = "";
-
-      setMessages((prev) => [...prev, { type: "bot", content: "" }]);
+    const data = response.body;
+    if (!data) {
+      setIsLoading(false);
       setIsWaitingForResponse(false);
+      return;
+    }
 
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        const chunkValue = decoder.decode(value);
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let botMessage = "";
 
-        // parse the JSON chunk and extract the "response" value
-        try {
-          const parsedChunk = JSON.parse(chunkValue);
-          botMessage += parsedChunk.response || "";
-        } catch (error) {
-          // if parsing fails, add the chunk as is (this might happen for partial chunks)
-          botMessage += chunkValue;
-        }
+    setMessages((prev) => [...prev, { type: "bot", content: "" }]);
+    setIsWaitingForResponse(false);
 
-        setMessages((prev) => [
-          ...prev.slice(0, -1),
-          { type: "bot", content: botMessage },
-        ]);
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+
+      // parse the JSON chunk and extract the "response" value
+      try {
+        const parsedChunk = JSON.parse(chunkValue);
+        botMessage += parsedChunk.response || "";
+      } catch (error) {
+        // if parsing fails, add the chunk as is (this might happen for partial chunks)
+        botMessage += chunkValue;
       }
+
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        { type: "bot", content: botMessage },
+      ]);
     }
 
     setIsLoading(false);
