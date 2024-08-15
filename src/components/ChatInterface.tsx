@@ -1,8 +1,10 @@
+import React from "react";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa";
 import { ChatBox } from "@/components/ChatBox";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
 import { Message } from "@/types/message";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatInterfaceProps {
   messages: Message[];
@@ -23,6 +25,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onInputChange,
   onSendMessage,
 }) => {
+  const urlTransform = (href: string) => href;
+
+  const components = {
+    a: ({ ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-cyan-600 hover:underline"
+        {...props}
+      />
+    ),
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <main className="flex-grow overflow-auto">
@@ -47,7 +62,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <p className="font-medium mb-1">
                   {message.type === "user" ? "Question:" : "Response:"}
                 </p>
-                <ReactMarkdown className="prose max-w-none">
+                <ReactMarkdown
+                  className="prose max-w-none prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline"
+                  remarkPlugins={[remarkGfm]}
+                  urlTransform={urlTransform}
+                  components={components}
+                >
                   {message.content}
                 </ReactMarkdown>
               </div>
