@@ -32,13 +32,16 @@ export default function Home() {
       setIsLoading(true);
       setIsWaitingForResponse(true);
       setMessages((_) => [{ type: "user", content: message }]);
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: message }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: message }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(response.statusText);
@@ -63,7 +66,16 @@ export default function Home() {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        botMessage += chunkValue;
+
+        // parse the JSON chunk and extract the "response" value
+        try {
+          const parsedChunk = JSON.parse(chunkValue);
+          botMessage += parsedChunk.response || "";
+        } catch (error) {
+          // if parsing fails, add the chunk as is (this might happen for partial chunks)
+          botMessage += chunkValue;
+        }
+
         setMessages((prev) => [
           ...prev.slice(0, -1),
           { type: "bot", content: botMessage },
