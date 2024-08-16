@@ -7,23 +7,25 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface ChatInterfaceProps {
+  queryId: string;
   messages: Message[];
   inputValue: string;
   isLoading: boolean;
-  isWaitingForResponse: boolean;
   onBackClick: () => void;
   onInputChange: (value: string) => void;
   onSendMessage: (message: string) => void;
+  onVoteClick: (vote: -1 | 0 | 1) => void;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  queryId,
   messages,
   inputValue,
   isLoading,
-  isWaitingForResponse,
   onBackClick,
   onInputChange,
   onSendMessage,
+  onVoteClick,
 }) => {
   const urlTransform = (href: string) => href;
 
@@ -73,12 +75,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
             ))}
           </div>
-          {isWaitingForResponse && (
+          {isLoading && (
             <div className="flex justify-center items-center my-4">
               <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
             </div>
           )}
-          {messages.length > 0 && <FeedbackButtons />}
+          {!isLoading && messages.length > 0 && (
+            <FeedbackButtons queryId={queryId} onVoteClick={onVoteClick} />
+          )}
         </div>
       </main>
       <footer className="bg-white border-t border-gray-200 p-4">
