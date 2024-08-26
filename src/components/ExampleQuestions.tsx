@@ -9,7 +9,7 @@ export const ExampleQuestions = ({
     "What are the key challenges that youths face?",
     "Categorise all posts and provide a % breakdown in descending order.",
     "What are the top 3 most popular posts?",
-    "What do JC students rant about?",
+    "What are some time management tips?",
   ];
 
   return (
