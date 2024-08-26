@@ -5,8 +5,10 @@ export const Description = () => {
         Your reddit questions, answered
       </h1>
       <p className="text-gray-600">
-        This is a fun LLM project which uses Retrieval Augmented Generation
-        (RAG) to answer questions relevant to a subreddit on Reddit.
+        Ask a question or click one of our example questions below to get
+        started.
+        <br />
+        Supported subreddit(s): r/SGExams
       </p>
     </div>
   );
