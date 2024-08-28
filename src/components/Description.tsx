@@ -5,8 +5,8 @@ export const Description = () => {
         Your reddit questions, answered
       </h1>
       <p className="text-gray-600">
-        Ask a question or click one of our example questions below to get
-        started.
+        Click one of our example questions below or login to ask your own
+        questions.
         <br />
         Supported subreddit(s): r/SGExams
       </p>
