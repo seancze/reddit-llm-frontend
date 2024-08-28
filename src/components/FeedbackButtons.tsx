@@ -10,6 +10,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   onVoteClick,
 }) => {
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
+
   const handleVote = (vote: -1 | 1) => {
     const newVote = currentVote === vote ? 0 : vote;
     setCurrentVote(newVote);
@@ -22,29 +23,31 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   }, [queryId]);
 
   return (
-    <div className="mt-4">
-      <p className="mb-2">Was this answer useful?</p>
+    <div className="mt-8">
+      <p className="text-lg font-semibold mb-4 ">Was this answer helpful?</p>
       <div className="flex space-x-4">
         <button
-          className={`rounded-full p-2 ${
-            currentVote === 1
-              ? "bg-green-500 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+            ${
+              currentVote === 1
+                ? "bg-white text-green-500 transform scale-105"
+                : "bg-green-500 text-white hover:bg-white hover:text-green-500 hover:scale-105"
+            }`}
           onClick={() => handleVote(1)}
         >
-          😊 Yes
+          👍 Yes
         </button>
 
         <button
-          className={`rounded-full p-2 ${
-            currentVote === -1
-              ? "bg-red-500 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+            ${
+              currentVote === -1
+                ? "bg-white text-red-500 transform scale-105"
+                : "bg-red-500 text-white hover:bg-white hover:text-red-500 hover:scale-105"
+            }`}
           onClick={() => handleVote(-1)}
         >
-          😞 No
+          👎 No
         </button>
       </div>
     </div>
