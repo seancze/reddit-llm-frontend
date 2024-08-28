@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { useSession } from "next-auth/react";
 
 interface ChatInterfaceProps {
   queryId: string;
@@ -32,6 +33,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [initialQuestion, setInitialQuestion] = useState("");
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (messages.length > 0 && messages[0].type === "user") {
@@ -108,7 +110,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       <Form>
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-medium">Question:</p>
-                          {isEditing ? (
+                          {session && isEditing ? (
                             <button
                               type="submit"
                               className="text-cyan-600 hover:text-cyan-700"
@@ -123,12 +125,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                               />
                             </button>
                           ) : (
-                            <button
-                              onClick={handleEditClick}
-                              className="text-cyan-600 hover:text-cyan-700"
-                            >
-                              <FaEdit className="w-5 h-5" />
-                            </button>
+                            session && (
+                              <button
+                                onClick={handleEditClick}
+                                className="text-cyan-600 hover:text-cyan-700"
+                              >
+                                <FaEdit className="w-5 h-5" />
+                              </button>
+                            )
                           )}
                         </div>
                         {isEditing ? (
