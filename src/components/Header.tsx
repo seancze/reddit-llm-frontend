@@ -9,7 +9,7 @@ export const Header = () => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
-        <div className="mx-auto px-8 py-4 flex justify-end">
+        <div className="mx-auto px-8 py-2 flex justify-end text-sm">
           {session ? (
             <button
               className="
