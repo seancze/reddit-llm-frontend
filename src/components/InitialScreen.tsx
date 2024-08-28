@@ -1,4 +1,3 @@
-import { Logo } from "@/components/Logo";
 import { Description } from "@/components/Description";
 import { ExampleQuestions } from "@/components/ExampleQuestions";
 import { ChatBox } from "@/components/ChatBox";
@@ -24,7 +23,6 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
         <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-12">
           <div className="max-w-3xl mx-auto">
-            <Logo />
             <Description />
             <ExampleQuestions onQuestionClick={onQuestionClick} />
           </div>
