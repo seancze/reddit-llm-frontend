@@ -1,6 +1,7 @@
 import React from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 interface ChatBoxProps {
   value: string;
@@ -15,6 +16,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
   onSend,
   isLoading,
 }: ChatBoxProps) => {
+  const { data: session } = useSession();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (value.trim() && !isLoading) {
@@ -32,15 +34,20 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             onChange(e.target.value)
           }
-          className="w-full px-4 py-3 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-          placeholder="Type your question here..."
+          className={`w-full px-4 py-3 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+            ${!session ? "cursor-not-allowed" : ""}`}
+          placeholder={
+            !session
+              ? "Login to ask your own question"
+              : "Type your question here..."
+          }
+          disabled={!session}
         />
         <button
           type="submit"
-          className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            isLoading ? "bg-gray-400" : " bg-cyan-500 hover:bg-cyan-600 "
-          }`}
-          disabled={isLoading}
+          className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400
+            ${!session ? "bg-gray-400" : "bg-cyan-500 hover:bg-cyan-600"}`}
+          disabled={!session}
         >
           {isLoading ? (
             <FaSpinner className="w-5 h-5 animate-spin" />
