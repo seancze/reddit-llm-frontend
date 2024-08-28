@@ -191,7 +191,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
             </div>
           )}
-          {!isLoading && messages.length > 0 && (
+          {!isLoading && messages.length === 2 && (
             <FeedbackButtons queryId={queryId} onVoteClick={onVoteClick} />
           )}
         </div>
