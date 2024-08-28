@@ -5,6 +5,7 @@ import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 import { debounce } from "lodash";
+import { Header } from "@/components/Header";
 
 type DebouncedFunction = {
   (queryId: string, vote: -1 | 0 | 1): void;
@@ -111,27 +112,30 @@ export default function Home() {
     [queryId] // this ensures that the debounced function is recreated when queryId changes
   );
   return (
-    <>
-      {showInitialContent ? (
-        <InitialScreen
-          onQuestionClick={handleSendMessage}
-          inputValue={inputValue}
-          onInputChange={setInputValue}
-          onSendMessage={handleSendMessage}
-          isLoading={isLoading}
-        />
-      ) : (
-        <ChatInterface
-          queryId={queryId}
-          messages={messages}
-          inputValue={inputValue}
-          isLoading={isLoading}
-          onBackClick={handleBackClick}
-          onInputChange={setInputValue}
-          onSendMessage={handleSendMessage}
-          onVoteClick={handleVoteClick}
-        />
-      )}
-    </>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-grow">
+        {showInitialContent ? (
+          <InitialScreen
+            onQuestionClick={handleSendMessage}
+            inputValue={inputValue}
+            onInputChange={setInputValue}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+          />
+        ) : (
+          <ChatInterface
+            queryId={queryId}
+            messages={messages}
+            inputValue={inputValue}
+            isLoading={isLoading}
+            onBackClick={handleBackClick}
+            onInputChange={setInputValue}
+            onSendMessage={handleSendMessage}
+            onVoteClick={handleVoteClick}
+          />
+        )}
+      </div>
+    </div>
   );
 }

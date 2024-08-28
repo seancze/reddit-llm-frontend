@@ -13,6 +13,10 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        "reddit-orange": "#FF4500",
+        "reddit-orange-dark": "#E03D00",
+      },
     },
   },
   plugins: [],
