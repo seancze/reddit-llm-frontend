@@ -127,10 +127,8 @@ export default function Home() {
           <ChatInterface
             queryId={queryId}
             messages={messages}
-            inputValue={inputValue}
             isLoading={isLoading}
             onBackClick={handleBackClick}
-            onInputChange={setInputValue}
             onSendMessage={handleSendMessage}
             onVoteClick={handleVoteClick}
           />

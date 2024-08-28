@@ -1,32 +1,69 @@
-import React from "react";
-import { FaArrowLeft, FaSpinner } from "react-icons/fa";
-import { ChatBox } from "@/components/ChatBox";
+import React, { useState, useEffect, KeyboardEvent } from "react";
+import { FaArrowLeft, FaSpinner, FaEdit, FaCheck } from "react-icons/fa";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
 import { Message } from "@/types/message";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
 interface ChatInterfaceProps {
   queryId: string;
   messages: Message[];
-  inputValue: string;
   isLoading: boolean;
   onBackClick: () => void;
-  onInputChange: (value: string) => void;
   onSendMessage: (message: string) => void;
   onVoteClick: (vote: -1 | 0 | 1) => void;
 }
 
+const validationSchema = Yup.object().shape({
+  question: Yup.string()
+    .min(10, "Question must be at least 10 characters long")
+    .required("Question is required"),
+});
+
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   queryId,
   messages,
-  inputValue,
   isLoading,
   onBackClick,
-  onInputChange,
   onSendMessage,
   onVoteClick,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [initialQuestion, setInitialQuestion] = useState("");
+
+  useEffect(() => {
+    if (messages.length > 0 && messages[0].type === "user") {
+      setInitialQuestion(messages[0].content);
+    }
+  }, [messages]);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSubmit = (
+    values: { question: string },
+    { setSubmitting }: FormikHelpers<{ question: string }>
+  ) => {
+    if (values.question !== messages[0].content) {
+      onSendMessage(values.question);
+    }
+    setIsEditing(false);
+    setSubmitting(false);
+  };
+
+  const handleKeyDown = (
+    e: KeyboardEvent<HTMLTextAreaElement>,
+    submitForm: () => void
+  ) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submitForm();
+    }
+  };
+
   const urlTransform = (href: string) => href;
 
   const components = {
@@ -61,17 +98,87 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     : "bg-white text-gray-800 border border-cyan-200"
                 }`}
               >
-                <p className="font-medium mb-1">
-                  {message.type === "user" ? "Question:" : "Response:"}
-                </p>
-                <ReactMarkdown
-                  className="prose max-w-none prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline"
-                  remarkPlugins={[remarkGfm]}
-                  urlTransform={urlTransform}
-                  components={components}
-                >
-                  {message.content}
-                </ReactMarkdown>
+                {message.type === "user" && index === 0 ? (
+                  <Formik
+                    initialValues={{ question: initialQuestion }}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                  >
+                    {({ isSubmitting, isValid, submitForm }) => (
+                      <Form>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-medium">Question:</p>
+                          {isEditing ? (
+                            <button
+                              type="submit"
+                              className="text-cyan-600 hover:text-cyan-700"
+                              disabled={isSubmitting || !isValid}
+                            >
+                              <FaCheck
+                                className={`w-5 h-5 ${
+                                  !isValid || isSubmitting
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`}
+                              />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={handleEditClick}
+                              className="text-cyan-600 hover:text-cyan-700"
+                            >
+                              <FaEdit className="w-5 h-5" />
+                            </button>
+                          )}
+                        </div>
+                        {isEditing ? (
+                          <div>
+                            <Field name="question">
+                              {({ field }: { field: any }) => (
+                                <textarea
+                                  {...field}
+                                  onKeyDown={(e) =>
+                                    handleKeyDown(e, submitForm)
+                                  }
+                                  className="w-full p-2 border border-cyan-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                  rows={3}
+                                />
+                              )}
+                            </Field>
+                            <ErrorMessage
+                              name="question"
+                              component="div"
+                              className="text-red-500 text-sm mt-1"
+                            />
+                          </div>
+                        ) : (
+                          <ReactMarkdown
+                            className="prose max-w-none prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline"
+                            remarkPlugins={[remarkGfm]}
+                            urlTransform={urlTransform}
+                            components={components}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        )}
+                      </Form>
+                    )}
+                  </Formik>
+                ) : (
+                  <>
+                    <p className="font-medium mb-1">
+                      {message.type === "user" ? "Question:" : "Response:"}
+                    </p>
+                    <ReactMarkdown
+                      className="prose max-w-none prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline"
+                      remarkPlugins={[remarkGfm]}
+                      urlTransform={urlTransform}
+                      components={components}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </>
+                )}
               </div>
             ))}
           </div>
@@ -85,16 +192,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </main>
-      <footer className="bg-white border-t border-gray-200 p-4">
-        <div className="max-w-4xl mx-auto">
-          <ChatBox
-            value={inputValue}
-            onChange={onInputChange}
-            onSend={onSendMessage}
-            isLoading={isLoading}
-          />
-        </div>
-      </footer>
     </div>
   );
 };
