@@ -85,8 +85,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <div className="relative max-w-4xl mx-auto w-full px-4 py-6">
           <button
             onClick={onBackClick}
-            className="mb-4 p-2 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md"
+            className={`${
+              isLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-cyan-500 hover:bg-cyan-600"
+            } mb-4 p-2 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
             aria-label="Back to start"
+            disabled={isLoading}
           >
             <FaArrowLeft className="w-6 h-6" />
           </button>
