@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -24,44 +26,63 @@ export default function Home() {
     }
   }, [messages]);
 
-  const handleSendMessage = useCallback(async (message: string) => {
-    setIsLoading(true);
-    setMessages((_) => [{ type: "user", content: message }]);
+  const handleSendMessage = useCallback(
+    async (message: string) => {
+      setIsLoading(true);
+      setMessages((_) => [{ type: "user", content: message }]);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: message,
-            username: session?.user?.name,
-          }),
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              query: message,
+              username: session?.user?.name,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(response.statusText);
+        const data = await response.json();
+
+        if (!data || !data.response) {
+          throw new Error("Invalid response from server");
+        }
+
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", content: data.response },
+        ]);
+        setQueryId(data.query_id);
+        setCurrentVote(data.user_vote);
+      } catch (error) {
+        console.log({ errorFetchingResponse: error });
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+          {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            progress: undefined,
+          }
+        );
+      } finally {
+        setIsLoading(false);
       }
-
-      const data = await response.json();
-
-      if (!data || !data.response) {
-        throw new Error("Invalid response from server");
-      }
-
-      setMessages((prev) => [...prev, { type: "bot", content: data.response }]);
-      setQueryId(data.query_id);
-      setCurrentVote(data.user_vote);
-    } catch (error) {
-      console.error("Error fetching response:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [session]
+  );
 
   const handleBackClick = () => {
     setShowInitialContent(true);
@@ -93,6 +114,7 @@ export default function Home() {
           />
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 }
