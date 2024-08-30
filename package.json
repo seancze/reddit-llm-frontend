@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.44",
+    "@hotjar/browser": "^1.0.9",
     "ai": "^3.3.5",
     "formik": "^2.4.6",
     "lodash": "^4.17.21",
