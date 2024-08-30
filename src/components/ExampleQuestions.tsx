@@ -7,7 +7,7 @@ export const ExampleQuestions = ({
 }: ExampleQuestionsProps) => {
   const questions = [
     "What are the key challenges that youths face?",
-    "Categorise all posts and provide a % breakdown in descending order.",
+    "Categorise all posts in descending order. Provide a % breakdown.",
     "What are the top 3 most popular posts?",
     "What are some time management tips?",
   ];
