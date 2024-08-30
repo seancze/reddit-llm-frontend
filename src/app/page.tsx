@@ -6,6 +6,7 @@ import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 import { debounce } from "lodash";
 import { Header } from "@/components/Header";
+import { useSession } from "next-auth/react";
 
 type DebouncedFunction = {
   (queryId: string, vote: -1 | 0 | 1): void;
@@ -18,6 +19,9 @@ export default function Home() {
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [queryId, setQueryId] = useState("");
+  const { data: session } = useSession();
+
+  console.log({ session });
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -37,7 +41,10 @@ export default function Home() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ query: message }),
+          body: JSON.stringify({
+            query: message,
+            username: session?.user?.name,
+          }),
         }
       );
 
