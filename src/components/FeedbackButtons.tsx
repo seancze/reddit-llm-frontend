@@ -30,8 +30,8 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === 1
-                ? "bg-white text-green-500 transform scale-105"
-                : "bg-green-500 text-white hover:bg-white hover:text-green-500 hover:scale-105"
+                ? "bg-green-500 text-white transform scale-105"
+                : "hover:bg-green-500 hover:text-white bg-white text-green-500 hover:scale-105"
             }`}
           onClick={() => handleVote(1)}
         >
@@ -42,8 +42,8 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === -1
-                ? "bg-white text-red-500 transform scale-105"
-                : "bg-red-500 text-white hover:bg-white hover:text-red-500 hover:scale-105"
+                ? "bg-red-500 text-white transform scale-105"
+                : "hover:bg-red-500 hover:text-white bg-white text-red-500 hover:scale-105"
             }`}
           onClick={() => handleVote(-1)}
         >
