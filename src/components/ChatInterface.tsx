@@ -34,14 +34,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   setCurrentVote,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [initialQuestion, setInitialQuestion] = useState("");
   const { data: session } = useSession();
-
-  useEffect(() => {
-    if (messages.length > 0 && messages[0].type === "user") {
-      setInitialQuestion(messages[0].content);
-    }
-  }, [messages]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -109,9 +102,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               >
                 {message.type === "user" && index === 0 ? (
                   <Formik
-                    initialValues={{ question: initialQuestion }}
+                    initialValues={{ question: message.content }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
+                    enableReinitialize
                   >
                     {({ isSubmitting, isValid, submitForm }) => (
                       <Form>
