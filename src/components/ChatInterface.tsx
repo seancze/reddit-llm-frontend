@@ -119,7 +119,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           <p className="font-medium">Question:</p>
                           {session && isEditing ? (
                             <button
-                              type="submit"
+                              type="button"
+                              onClick={submitForm}
                               className="text-cyan-600 hover:text-cyan-700"
                               disabled={isSubmitting || !isValid}
                             >
@@ -134,8 +135,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           ) : (
                             session && (
                               <button
+                                type="button"
                                 onClick={handleEditClick}
                                 className="text-cyan-600 hover:text-cyan-700"
+                                disabled={isLoading}
                               >
                                 <FaEdit className="w-5 h-5" />
                               </button>
