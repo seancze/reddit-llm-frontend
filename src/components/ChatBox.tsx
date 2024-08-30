@@ -17,11 +17,11 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
   isLoading,
 }: ChatBoxProps) => {
   const { data: session } = useSession();
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (value.trim() && !isLoading) {
-      onSend(value);
       onChange("");
+      await onSend(value);
     }
   };
 
