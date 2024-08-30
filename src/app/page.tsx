@@ -4,14 +4,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
-import { debounce } from "lodash";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
-
-type DebouncedFunction = {
-  (queryId: string, vote: -1 | 0 | 1): void;
-  cancel: () => void;
-};
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -19,6 +13,7 @@ export default function Home() {
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [queryId, setQueryId] = useState("");
+  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
   const { data: session } = useSession();
 
   console.log({ session });
@@ -60,6 +55,7 @@ export default function Home() {
 
       setMessages((prev) => [...prev, { type: "bot", content: data.response }]);
       setQueryId(data.query_id);
+      setCurrentVote(data.user_vote);
     } catch (error) {
       console.error("Error fetching response:", error);
     } finally {
@@ -73,51 +69,6 @@ export default function Home() {
     setInputValue("");
   };
 
-  const debouncedVoteRef = useRef<DebouncedFunction | null>(null);
-
-  useEffect(() => {
-    debouncedVoteRef.current = debounce(
-      async (queryId: string, vote: -1 | 0 | 1) => {
-        try {
-          console.log({ queryId, vote });
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}vote`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ query_id: queryId, vote }),
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error(response.statusText);
-          }
-
-          console.log(`Vote of ${vote} submitted for query ${queryId}`);
-        } catch (error) {
-          console.error("Error submitting vote:", error);
-        }
-      },
-      300
-    );
-
-    return () => {
-      if (debouncedVoteRef.current) {
-        debouncedVoteRef.current.cancel();
-      }
-    };
-  }, []);
-
-  const handleVoteClick = useCallback(
-    (vote: -1 | 0 | 1) => {
-      if (queryId && debouncedVoteRef.current) {
-        debouncedVoteRef.current(queryId, vote);
-      }
-    },
-    [queryId] // this ensures that the debounced function is recreated when queryId changes
-  );
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -137,7 +88,8 @@ export default function Home() {
             isLoading={isLoading}
             onBackClick={handleBackClick}
             onSendMessage={handleSendMessage}
-            onVoteClick={handleVoteClick}
+            currentVote={currentVote}
+            setCurrentVote={setCurrentVote}
           />
         )}
       </div>

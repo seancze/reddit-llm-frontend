@@ -1,26 +1,77 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useCallback, useRef } from "react";
+import { debounce } from "lodash";
+import { useSession } from "next-auth/react";
 
 interface FeedbackButtonsProps {
   queryId: string;
-  onVoteClick: (vote: -1 | 0 | 1) => void;
+  currentVote: -1 | 0 | 1;
+  setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
 }
+
+type DebouncedFunction = {
+  (queryId: string, vote: -1 | 0 | 1, username: string): void;
+  cancel: () => void;
+};
 
 export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   queryId,
-  onVoteClick,
+  currentVote,
+  setCurrentVote,
 }) => {
-  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
+  const { data: session } = useSession();
+  const debouncedVoteRef = useRef<DebouncedFunction | null>(null);
 
-  const handleVote = (vote: -1 | 1) => {
-    const newVote = currentVote === vote ? 0 : vote;
-    setCurrentVote(newVote);
-    onVoteClick(newVote);
-  };
+  console.log({ currentVote });
+
+  const handleVote = useCallback(
+    (vote: -1 | 1) => {
+      const newVote = currentVote === vote ? 0 : vote;
+      setCurrentVote(newVote);
+
+      if (queryId && debouncedVoteRef.current && session?.user?.name) {
+        debouncedVoteRef.current(queryId, newVote, session?.user?.name);
+      }
+    },
+    // this ensures that the debounced function is recreated when any of the dependencies change
+    [queryId, session?.user?.name, currentVote, setCurrentVote]
+  );
 
   useEffect(() => {
-    // reset the vote when queryId changes
-    setCurrentVote(0);
-  }, [queryId]);
+    debouncedVoteRef.current = debounce(
+      async (queryId: string, vote: -1 | 0 | 1, username: string) => {
+        try {
+          console.log({ queryId, vote });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}vote`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ query_id: queryId, vote, username }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(response.statusText);
+          }
+
+          console.log(`Vote of ${vote} submitted for query ${queryId}`);
+        } catch (error) {
+          console.error("Error submitting vote:", error);
+        }
+      },
+      300
+    );
+
+    return () => {
+      if (debouncedVoteRef.current) {
+        debouncedVoteRef.current.cancel();
+      }
+    };
+  }, []);
 
   return (
     <div className="mt-8">

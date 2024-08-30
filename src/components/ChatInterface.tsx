@@ -14,7 +14,8 @@ interface ChatInterfaceProps {
   isLoading: boolean;
   onBackClick: () => void;
   onSendMessage: (message: string) => void;
-  onVoteClick: (vote: -1 | 0 | 1) => void;
+  currentVote: -1 | 0 | 1;
+  setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
 }
 
 const validationSchema = Yup.object().shape({
@@ -29,7 +30,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   isLoading,
   onBackClick,
   onSendMessage,
-  onVoteClick,
+  currentVote,
+  setCurrentVote,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [initialQuestion, setInitialQuestion] = useState("");
@@ -197,7 +199,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           )}
           {!isLoading && session && messages.length === 2 && (
-            <FeedbackButtons queryId={queryId} onVoteClick={onVoteClick} />
+            <FeedbackButtons
+              queryId={queryId}
+              currentVote={currentVote}
+              setCurrentVote={setCurrentVote}
+            />
           )}
         </div>
       </main>
