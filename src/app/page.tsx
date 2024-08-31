@@ -91,9 +91,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col h-screen">
       <Header />
-      <div className="flex-grow">
+      <div className="flex-grow overflow-hidden">
         {showInitialContent ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}
@@ -106,8 +106,10 @@ export default function Home() {
           <ChatInterface
             queryId={queryId}
             messages={messages}
+            inputValue={inputValue}
             isLoading={isLoading}
             onBackClick={handleBackClick}
+            onInputChange={setInputValue}
             onSendMessage={handleSendMessage}
             currentVote={currentVote}
             setCurrentVote={setCurrentVote}
