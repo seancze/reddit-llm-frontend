@@ -25,7 +25,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     }
   };
 
-  const isDisabled = !session || isLoading;
+  const isDisabled = !session;
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
@@ -59,11 +59,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
             }`}
           disabled={isDisabled}
         >
-          {isLoading ? (
-            <FaSpinner className="w-5 h-5 animate-spin" />
-          ) : (
-            <FaPaperPlane className="w-5 h-5" />
-          )}
+          <FaPaperPlane className="w-5 h-5" />
         </button>
       </div>
     </form>
