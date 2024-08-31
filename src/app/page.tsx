@@ -93,7 +93,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <div className="flex-grow overflow-hidden">
+      <main className="flex-grow overflow-hidden">
         {showInitialContent ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}
@@ -115,7 +115,7 @@ export default function Home() {
             setCurrentVote={setCurrentVote}
           />
         )}
-      </div>
+      </main>
       <ToastContainer />
     </div>
   );
