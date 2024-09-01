@@ -9,7 +9,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
 }) => {
   const questions = [
     "What are the key challenges that youths face?",
-    "Categorise all posts in descending order. Provide a % breakdown.",
+    "Group all posts by category in descending order and provide a % breakdown",
     "What are the top 3 most popular posts?",
     "What are some time management tips?",
   ];
