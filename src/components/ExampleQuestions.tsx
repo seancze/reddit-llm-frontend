@@ -1,10 +1,12 @@
+import React from "react";
+
 interface ExampleQuestionsProps {
   onQuestionClick: (question: string) => void;
 }
 
-export const ExampleQuestions = ({
+export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
   onQuestionClick,
-}: ExampleQuestionsProps) => {
+}) => {
   const questions = [
     "What are the key challenges that youths face?",
     "Categorise all posts in descending order. Provide a % breakdown.",
@@ -17,7 +19,7 @@ export const ExampleQuestions = ({
       {questions.map((q, index) => (
         <button
           key={index}
-          className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white"
+          className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white border border-gray-600 hover:border-gray-400 transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-400"
           onClick={() => onQuestionClick(q)}
         >
           {q}
