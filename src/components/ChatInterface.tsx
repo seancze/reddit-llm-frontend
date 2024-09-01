@@ -46,8 +46,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-900">
-      <div className="flex-grow overflow-auto">
+    <div className="flex flex-col h-screen bg-gray-900">
+      <div className="flex-grow overflow-auto pb-32">
         <div className="max-w-4xl mx-auto w-full px-4 py-6">
           <button
             onClick={onBackClick}
@@ -101,16 +101,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <div className="bg-gray-800 border-t border-gray-700 p-4">
-        <div className="max-w-4xl mx-auto">
-          <ChatBox
-            value={inputValue}
-            onChange={onInputChange}
-            onSend={onSendMessage}
-            isLoading={isLoading}
-          />
-        </div>
-      </div>
+      <ChatBox
+        value={inputValue}
+        onChange={onInputChange}
+        onSend={onSendMessage}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
