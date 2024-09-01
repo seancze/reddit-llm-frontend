@@ -39,7 +39,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <a
         target="_blank"
         rel="noopener noreferrer"
-        className="text-cyan-400 hover:underline"
+        className="text-cyan-500 hover:text-cyan-400 underline"
         {...props}
       />
     ),
