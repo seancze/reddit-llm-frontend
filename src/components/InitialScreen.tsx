@@ -18,10 +18,10 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
   isLoading,
 }) => {
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-between sm:py-12">
+    <div className="min-h-screen bg-gray-900 py-6 flex flex-col justify-between sm:py-12">
       <div className="relative py-3 sm:max-w-3xl sm:mx-auto w-full">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-12">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+        <div className="relative px-4 py-10 bg-gray-800 shadow-lg sm:rounded-3xl sm:p-12">
           <div className="max-w-3xl mx-auto">
             <Description />
             <ExampleQuestions onQuestionClick={onQuestionClick} />
@@ -29,7 +29,7 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 shadow-md">
         <div className="max-w-3xl mx-auto">
           <ChatBox
             value={inputValue}

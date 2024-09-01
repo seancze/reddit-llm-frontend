@@ -7,7 +7,7 @@ export const Header = () => {
   const { data: session } = useSession();
 
   return (
-    <header className="bg-white shadow-md z-10">
+    <header className="bg-gray-800 shadow-md z-10">
       <div className="mx-auto px-8 py-2 flex justify-end text-sm">
         {session ? (
           <button

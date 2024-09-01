@@ -39,22 +39,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <a
         target="_blank"
         rel="noopener noreferrer"
-        className="text-cyan-600 hover:underline"
+        className="text-cyan-400 hover:underline"
         {...props}
       />
     ),
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-100">
+    <div className="flex flex-col h-full bg-gray-900">
       <div className="flex-grow overflow-auto">
         <div className="max-w-4xl mx-auto w-full px-4 py-6">
           <button
             onClick={onBackClick}
             className={`${
               isLoading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-cyan-500 hover:bg-cyan-600"
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-cyan-600 hover:bg-cyan-700"
             } mb-4 p-2 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
             aria-label="Back to start"
             disabled={isLoading}
@@ -67,8 +67,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
                   message.type === "user"
-                    ? "bg-cyan-50 text-cyan-900"
-                    : "bg-white text-gray-800 border border-cyan-200"
+                    ? "bg-gray-800 text-white"
+                    : "bg-gray-700 text-white border border-cyan-700"
                 }`}
               >
                 <>
@@ -76,7 +76,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     {message.type === "user" ? "Question:" : "Response:"}
                   </p>
                   <ReactMarkdown
-                    className="prose max-w-none prose-a:text-cyan-600 prose-a:no-underline hover:prose-a:underline"
+                    className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
                     remarkPlugins={[remarkGfm]}
                     urlTransform={urlTransform}
                     components={components}
@@ -101,7 +101,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <div className="bg-white border-t border-gray-200 p-4">
+      <div className="bg-gray-800 border-t border-gray-700 p-4">
         <div className="max-w-4xl mx-auto">
           <ChatBox
             value={inputValue}

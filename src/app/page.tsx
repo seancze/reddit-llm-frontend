@@ -91,7 +91,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-gray-900 text-white">
       <Header />
       <main className="flex-grow overflow-hidden">
         {showInitialContent ? (
@@ -116,7 +116,7 @@ export default function Home() {
           />
         )}
       </main>
-      <ToastContainer />
+      <ToastContainer theme="dark" />
     </div>
   );
 }

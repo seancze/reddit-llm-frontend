@@ -17,7 +17,7 @@ export const ExampleQuestions = ({
       {questions.map((q, index) => (
         <button
           key={index}
-          className="bg-gray-200 hover:bg-gray-300 rounded-lg p-2 text-xs md:text-sm text-left"
+          className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white"
           onClick={() => onQuestionClick(q)}
         >
           {q}

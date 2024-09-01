@@ -75,14 +75,16 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
 
   return (
     <div className="mt-8">
-      <p className="text-lg font-semibold mb-4 ">Was this answer helpful?</p>
+      <p className="text-lg font-semibold mb-4 text-white">
+        Was this answer helpful?
+      </p>
       <div className="flex space-x-4">
         <button
           className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === 1
-                ? "bg-green-500 text-white transform scale-105"
-                : "hover:bg-green-500 hover:text-white bg-white text-green-500 hover:scale-105"
+                ? "bg-green-600 text-white transform scale-105"
+                : "hover:bg-green-600 hover:text-white bg-gray-700 text-green-400 hover:scale-105"
             }`}
           onClick={() => handleVote(1)}
         >
@@ -93,8 +95,8 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === -1
-                ? "bg-red-500 text-white transform scale-105"
-                : "hover:bg-red-500 hover:text-white bg-white text-red-500 hover:scale-105"
+                ? "bg-red-600 text-white transform scale-105"
+                : "hover:bg-red-600 hover:text-white bg-gray-700 text-red-400 hover:scale-105"
             }`}
           onClick={() => handleVote(-1)}
         >

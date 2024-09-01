@@ -36,11 +36,11 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             onChange(e.target.value)
           }
-          className={`w-full px-4 py-3 pr-12  border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+          className={`w-full px-4 py-3 pr-12 border border-gray-600 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200
             ${
               isDisabled
-                ? "cursor-not-allowed bg-gray-200"
-                : "text-gray-700 bg-white"
+                ? "cursor-not-allowed bg-gray-700"
+                : "text-white bg-gray-800"
             }`}
           placeholder={
             !session
@@ -54,8 +54,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
           className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400
             ${
               isDisabled
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-cyan-500 hover:bg-cyan-600"
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-cyan-600 hover:bg-cyan-700"
             }`}
           disabled={isDisabled}
         >
