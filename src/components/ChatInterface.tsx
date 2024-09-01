@@ -54,7 +54,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             className={`${
               isLoading
                 ? "bg-gray-600 cursor-not-allowed"
-                : "bg-cyan-600 hover:bg-cyan-700"
+                : "bg-cyan-700 hover:bg-cyan-800"
             } mb-4 p-2 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
             aria-label="Back to start"
             disabled={isLoading}
@@ -67,7 +67,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
                   message.type === "user"
-                    ? "bg-gray-800 text-white"
+                    ? "bg-cyan-700 text-white"
                     : "bg-gray-700 text-white border border-cyan-700"
                 }`}
               >
