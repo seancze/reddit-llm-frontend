@@ -8,6 +8,7 @@ import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { questionsDict } from "@/app/utils/constants";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -32,26 +33,41 @@ export default function Home() {
       setMessages((_) => [{ type: "user", content: message }]);
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              query: message,
-              username: session?.user?.name,
-            }),
-          }
-        );
-
+        let data;
+        let response;
+        const messageLower = message.toLowerCase();
+        if (questionsDict[messageLower]) {
+          response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query/${questionsDict[messageLower]}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${session?.jwt}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        } else {
+          response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${session?.jwt}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                query: message,
+                username: session?.user?.name,
+              }),
+            }
+          );
+        }
         if (!response.ok) {
           throw new Error(response.statusText);
         }
 
-        const data = await response.json();
-
+        data = await response.json();
         if (!data || !data.response) {
           throw new Error("Invalid response from server");
         }
