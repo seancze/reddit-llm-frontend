@@ -48,6 +48,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             {
               method: "PUT",
               headers: {
+                Authorization: `Bearer ${session?.jwt}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ query_id: queryId, vote, username }),
