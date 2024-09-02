@@ -11,8 +11,8 @@ interface ChatBoxProps {
 
 const validationSchema = Yup.object().shape({
   message: Yup.string()
-    .min(10, "Message must be at least 10 characters")
-    .required("Message is required"),
+    .min(10, "Question must be at least 10 characters")
+    .required("Question is required"),
 });
 
 export const ChatBox: React.FC<ChatBoxProps> = ({
