@@ -3,6 +3,9 @@
 import { useEffect, useCallback, useRef } from "react";
 import { debounce } from "lodash";
 import { useSession } from "next-auth/react";
+import { FaShare, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import { toastConfig } from "@/app/utils/constants";
 
 interface FeedbackButtonsProps {
   queryId: string;
@@ -23,8 +26,6 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   const { data: session } = useSession();
   const debouncedVoteRef = useRef<DebouncedFunction | null>(null);
 
-  console.log({ currentVote });
-
   const handleVote = useCallback(
     (vote: -1 | 1) => {
       const newVote = currentVote === vote ? 0 : vote;
@@ -34,15 +35,24 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         debouncedVoteRef.current(queryId, newVote, session?.user?.name);
       }
     },
-    // this ensures that the debounced function is recreated when any of the dependencies change
     [queryId, session?.user?.name, currentVote, setCurrentVote]
   );
+
+  const handleShare = async () => {
+    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}query/${queryId}`;
+    console.log({ shareUrl });
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Copied to clipboard!", toastConfig);
+    } catch (err) {
+      toast.error("Failed to copy", toastConfig);
+    }
+  };
 
   useEffect(() => {
     debouncedVoteRef.current = debounce(
       async (queryId: string, vote: -1 | 0 | 1, username: string) => {
         try {
-          console.log({ queryId, vote });
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}vote`,
             {
@@ -76,12 +86,9 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
 
   return (
     <div className="mt-8">
-      <p className="text-lg font-semibold mb-4 text-white">
-        Was this answer helpful?
-      </p>
       <div className="flex space-x-4">
         <button
-          className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === 1
                 ? "bg-green-600 text-white transform scale-105"
@@ -89,11 +96,11 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             }`}
           onClick={() => handleVote(1)}
         >
-          👍 Yes
+          <FaThumbsUp />
         </button>
 
         <button
-          className={`flex items-center justify-center px-6 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
             ${
               currentVote === -1
                 ? "bg-red-600 text-white transform scale-105"
@@ -101,9 +108,20 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             }`}
           onClick={() => handleVote(-1)}
         >
-          👎 No
+          <FaThumbsDown />
         </button>
+
+        <div className="relative">
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+              hover:bg-cyan-600 hover:text-white bg-gray-700 text-cyan-400 hover:scale-105"
+          >
+            <FaShare className="mr-2" /> Share
+          </button>
+        </div>
       </div>
+      <ToastContainer theme="dark" />
     </div>
   );
 };
