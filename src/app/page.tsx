@@ -9,14 +9,26 @@ import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { questionsDict } from "@/app/utils/constants";
+import { QueryData } from "@/types/queryData";
 
-export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
+export const Home = ({
+  queryData,
+  initialError,
+}: {
+  queryData?: QueryData;
+  initialError?: string;
+}) => {
+  const [messages, setMessages] = useState<Message[]>(
+    queryData?.messages || []
+  );
   const [inputValue, setInputValue] = useState("");
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [queryId, setQueryId] = useState("");
-  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
+  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(
+    queryData?.vote || 0
+  );
+  const [error, setError] = useState<string>(initialError || "");
   const { data: session } = useSession();
 
   console.log({ session });
@@ -26,6 +38,19 @@ export default function Home() {
       setShowInitialContent(false);
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        progress: undefined,
+      });
+    }
+  }, [error]);
 
   const handleSendMessage = useCallback(
     async (message: string) => {
@@ -68,6 +93,7 @@ export default function Home() {
         }
 
         data = await response.json();
+        console.log({ data });
         if (!data || !data.response) {
           throw new Error("Invalid response from server");
         }
@@ -80,18 +106,10 @@ export default function Home() {
         setCurrentVote(data.user_vote);
       } catch (error) {
         console.log({ errorFetchingResponse: error });
-        toast.error(
+        setError(
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred",
-          {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            progress: undefined,
-          }
+            : "An unexpected error occurred"
         );
       } finally {
         setIsLoading(false);
@@ -135,4 +153,5 @@ export default function Home() {
       <ToastContainer theme="dark" />
     </div>
   );
-}
+};
+export default Home;
