@@ -30,7 +30,6 @@ export const Home = ({
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(
     queryData?.vote || 0
   );
-  const [error, setError] = useState<string>(initialError || "");
   const { data: session } = useSession();
 
   console.log({ session });
@@ -42,10 +41,10 @@ export const Home = ({
   }, [messages]);
 
   useEffect(() => {
-    if (error) {
-      toast.error(error, toastConfig);
+    if (initialError) {
+      toast.error(initialError, toastConfig);
     }
-  }, [error]);
+  }, []);
 
   const handleSendMessage = useCallback(
     async (message: string) => {
@@ -101,11 +100,15 @@ export const Home = ({
         setCurrentVote(data.user_vote);
       } catch (error) {
         console.log({ errorFetchingResponse: error });
-        setError(
+        let errorMessage =
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred"
-        );
+            : "An unexpected error occurred";
+        if (errorMessage === "Unauthorized") {
+          errorMessage =
+            "Your session has expired or you are not logged in. Please login again.";
+        }
+        toast.error(errorMessage, toastConfig);
       } finally {
         setIsLoading(false);
       }
