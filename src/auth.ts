@@ -20,27 +20,22 @@ const createJWT = (username: string | null | undefined) => {
   return jwt.sign(payload, process.env.AUTH_SECRET!, { algorithm: ALGORITHM });
 };
 
-export const config = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Reddit],
   callbacks: {
-    async session({ session, token }) {
+    session({ session }) {
       const jwt = createJWT(session.user.name);
-      // send properties to the client, like an access_token from a provider.
       return {
         ...session,
-        accessToken: token.accessToken,
         jwt,
       };
     },
   },
-} satisfies NextAuthConfig;
-
-export const { handlers, signIn, signOut, auth } = NextAuth(config);
+});
 
 // extend the built-in session type
 declare module "next-auth" {
   interface Session {
-    accessToken?: string;
     jwt?: string;
   }
 }
