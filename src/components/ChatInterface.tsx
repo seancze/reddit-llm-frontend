@@ -10,10 +10,8 @@ import { ChatBox } from "@/components/ChatBox";
 interface ChatInterfaceProps {
   queryId: string;
   messages: Message[];
-  inputValue: string;
   isLoading: boolean;
   onBackClick: () => void;
-  onInputChange: (value: string) => void;
   onSendMessage: (message: string) => void;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
@@ -22,10 +20,8 @@ interface ChatInterfaceProps {
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   queryId,
   messages,
-  inputValue,
   isLoading,
   onBackClick,
-  onInputChange,
   onSendMessage,
   currentVote,
   setCurrentVote,
@@ -101,12 +97,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <ChatBox
-        value={inputValue}
-        onChange={onInputChange}
-        onSend={onSendMessage}
-        isLoading={isLoading}
-      />
+      <ChatBox onSend={onSendMessage} isLoading={isLoading} />
     </div>
   );
 };

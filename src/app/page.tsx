@@ -23,7 +23,6 @@ export const Home = ({
   const [messages, setMessages] = useState<Message[]>(
     queryData?.messages || []
   );
-  const [inputValue, setInputValue] = useState("");
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [queryId, setQueryId] = useState(initialQueryId || "");
@@ -122,7 +121,6 @@ export const Home = ({
   const handleBackClick = () => {
     setShowInitialContent(true);
     setMessages([]);
-    setInputValue("");
   };
 
   return (
@@ -132,8 +130,6 @@ export const Home = ({
         {showInitialContent ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}
-            inputValue={inputValue}
-            onInputChange={setInputValue}
             onSendMessage={handleSendMessage}
             isLoading={isLoading}
           />
@@ -141,10 +137,8 @@ export const Home = ({
           <ChatInterface
             queryId={queryId}
             messages={messages}
-            inputValue={inputValue}
             isLoading={isLoading}
             onBackClick={handleBackClick}
-            onInputChange={setInputValue}
             onSendMessage={handleSendMessage}
             currentVote={currentVote}
             setCurrentVote={setCurrentVote}

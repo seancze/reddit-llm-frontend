@@ -4,16 +4,12 @@ import { ChatBox } from "@/components/ChatBox";
 
 interface InitialScreenProps {
   onQuestionClick: (message: string) => void;
-  inputValue: string;
-  onInputChange: (value: string) => void;
   onSendMessage: (message: string) => void;
   isLoading: boolean;
 }
 
 export const InitialScreen: React.FC<InitialScreenProps> = ({
   onQuestionClick,
-  inputValue,
-  onInputChange,
   onSendMessage,
   isLoading,
 }) => {
@@ -31,12 +27,7 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
 
       <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 shadow-md">
         <div className="max-w-3xl mx-auto">
-          <ChatBox
-            value={inputValue}
-            onChange={onInputChange}
-            onSend={onSendMessage}
-            isLoading={isLoading}
-          />
+          <ChatBox onSend={onSendMessage} isLoading={isLoading} />
         </div>
       </div>
     </div>
