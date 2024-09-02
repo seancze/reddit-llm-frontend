@@ -40,7 +40,7 @@ const getQueryData = async (pageId: string): Promise<QueryData> => {
 export default async function Page({ params }: { params: { id: string } }) {
   try {
     const queryData = await getQueryData(params.id);
-    return <Home queryData={queryData} />;
+    return <Home initialQueryId={params.id} queryData={queryData} />;
   } catch (error) {
     console.log({ error });
     return (

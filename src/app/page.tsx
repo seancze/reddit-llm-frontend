@@ -8,13 +8,15 @@ import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { questionsDict } from "@/app/utils/constants";
+import { questionsDict, toastConfig } from "@/app/utils/constants";
 import { QueryData } from "@/types/queryData";
 
 export const Home = ({
+  initialQueryId,
   queryData,
   initialError,
 }: {
+  initialQueryId?: string;
   queryData?: QueryData;
   initialError?: string;
 }) => {
@@ -24,7 +26,7 @@ export const Home = ({
   const [inputValue, setInputValue] = useState("");
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [queryId, setQueryId] = useState("");
+  const [queryId, setQueryId] = useState(initialQueryId || "");
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(
     queryData?.vote || 0
   );
@@ -41,14 +43,7 @@ export const Home = ({
 
   useEffect(() => {
     if (error) {
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        progress: undefined,
-      });
+      toast.error(error, toastConfig);
     }
   }, [error]);
 

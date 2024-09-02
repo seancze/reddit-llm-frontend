@@ -1,3 +1,5 @@
+import { ToastOptions } from "react-toastify";
+
 type QuestionsDict = {
   [key: string]: string;
 };
@@ -8,4 +10,13 @@ export const questionsDict: QuestionsDict = {
     "66d4730fb71154382575eef8",
   "what are the top 3 most popular posts?": "66d43353b0d46599ed963670",
   "what are some time management tips?": "66d44d905e53e4575d513fdc",
+};
+
+export const toastConfig: ToastOptions = {
+  position: "top-center",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  progress: undefined,
 };
