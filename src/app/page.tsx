@@ -105,8 +105,11 @@ export const Home = ({
             ? error.message
             : "An unexpected error occurred";
         if (errorMessage === "Unauthorized") {
-          errorMessage =
-            "Your session has expired or you are not logged in. Please login again.";
+          if (session) {
+            errorMessage = "Your session has expired. Please login again";
+          } else {
+            errorMessage = "Unauthorised: Please login to continue";
+          }
         }
         toast.error(errorMessage, toastConfig);
       } finally {
