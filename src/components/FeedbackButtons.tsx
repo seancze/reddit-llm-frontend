@@ -4,7 +4,7 @@ import { useEffect, useCallback, useRef } from "react";
 import { debounce } from "lodash";
 import { useSession } from "next-auth/react";
 import { FaShare, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { toastConfig } from "@/app/utils/constants";
 
 interface FeedbackButtonsProps {
@@ -121,7 +121,6 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           </button>
         </div>
       </div>
-      <ToastContainer theme="dark" />
     </div>
   );
 };
