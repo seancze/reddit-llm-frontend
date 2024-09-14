@@ -20,7 +20,7 @@ const createJWT = (session: Session) => {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Reddit],
   session: {
-    maxAge: 5, // 5 seconds
+    maxAge: 60 * 60 * 24 * 7, // 1 week
   },
   callbacks: {
     session({ session }) {
