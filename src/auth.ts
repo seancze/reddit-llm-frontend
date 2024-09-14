@@ -1,20 +1,17 @@
 import NextAuth from "next-auth";
 import Reddit from "next-auth/providers/reddit";
-import type { NextAuthConfig } from "next-auth";
+import { Session } from "next-auth";
 import jwt from "jsonwebtoken";
+import { toSecondsSinceEpoch } from "@/app/utils/format";
 
 const ALGORITHM = "HS256";
-const ACCESS_TOKEN_EXPIRE_MINUTES = 60;
 
-const createJWT = (username: string | null | undefined) => {
-  if (!username) return "";
-
-  const expirationTime =
-    Math.floor(Date.now() / 1000) + ACCESS_TOKEN_EXPIRE_MINUTES * 60;
+const createJWT = (session: Session) => {
+  if (!session.user?.name) return "";
 
   const payload = {
-    username,
-    exp: expirationTime,
+    username: session.user.name,
+    exp: toSecondsSinceEpoch(session.expires),
   };
 
   return jwt.sign(payload, process.env.AUTH_SECRET!, { algorithm: ALGORITHM });
@@ -22,9 +19,12 @@ const createJWT = (username: string | null | undefined) => {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Reddit],
+  session: {
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+  },
   callbacks: {
     session({ session }) {
-      const jwt = createJWT(session.user.name);
+      const jwt = createJWT(session);
       return {
         ...session,
         jwt,
