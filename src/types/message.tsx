@@ -1,4 +1,4 @@
 export interface Message {
-  type: "user" | "bot";
+  type: "user" | "assistant";
   content: string;
 }

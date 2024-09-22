@@ -93,7 +93,7 @@ export const Home = ({
 
         setMessages((prev) => [
           ...prev,
-          { type: "bot", content: data.response },
+          { type: "assistant", content: data.response },
         ]);
         setQueryId(data.query_id);
         setCurrentVote(data.user_vote);
