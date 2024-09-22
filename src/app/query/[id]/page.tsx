@@ -26,8 +26,8 @@ const getQueryData = async (pageId: string): Promise<QueryData> => {
 
     return {
       messages: [
-        { type: "user", content: capitaliseFirstLetter(data.query) },
-        { type: "assistant", content: data.response },
+        { role: "user", content: capitaliseFirstLetter(data.query) },
+        { role: "assistant", content: data.response },
       ],
       vote: data.user_vote,
     };

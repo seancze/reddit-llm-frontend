@@ -62,14 +62,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
-                  message.type === "user"
+                  message.role === "user"
                     ? "bg-cyan-700 text-white"
                     : "bg-gray-700 text-white border border-cyan-700"
                 }`}
               >
                 <>
                   <p className="font-medium mb-1">
-                    {message.type === "user" ? "Question:" : "Response:"}
+                    {message.role === "user" ? "Question:" : "Response:"}
                   </p>
                   <ReactMarkdown
                     className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
