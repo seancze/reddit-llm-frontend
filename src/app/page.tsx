@@ -138,6 +138,7 @@ export const Home = ({
         ) : (
           <ChatInterface
             queryId={queryId}
+            chatId={chatId}
             messages={messages}
             isLoading={isLoading}
             onBackClick={handleBackClick}

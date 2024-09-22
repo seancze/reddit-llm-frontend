@@ -9,6 +9,7 @@ import { ChatBox } from "@/components/ChatBox";
 
 interface ChatInterfaceProps {
   queryId: string;
+  chatId: string;
   messages: Message[];
   isLoading: boolean;
   onBackClick: () => void;
@@ -19,6 +20,7 @@ interface ChatInterfaceProps {
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   queryId,
+  chatId,
   messages,
   isLoading,
   onBackClick,
@@ -92,6 +94,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {!isLoading && session && messages.length % 2 == 0 && (
             <FeedbackButtons
               queryId={queryId}
+              chatId={chatId}
               currentVote={currentVote}
               setCurrentVote={setCurrentVote}
             />
