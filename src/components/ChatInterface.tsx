@@ -88,7 +88,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
             </div>
           )}
-          {!isLoading && session && messages.length === 2 && (
+          {/* only show feedback button when response from AI is generated; this happens when messages.length is even */}
+          {!isLoading && session && messages.length % 2 == 0 && (
             <FeedbackButtons
               queryId={queryId}
               currentVote={currentVote}
