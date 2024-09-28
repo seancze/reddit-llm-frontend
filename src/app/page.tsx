@@ -10,38 +10,43 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
 import { ChatData } from "@/types/chatData";
+import { FaSpinner } from "react-icons/fa";
 
 export const Home = ({
   chatData,
   initialError,
+  isGettingChat,
 }: {
   initialQueryId?: string;
   chatData?: ChatData;
   initialError?: string;
+  isGettingChat?: boolean;
 }) => {
-  const [messages, setMessages] = useState<Message[]>(chatData?.messages || []);
-  const [showInitialContent, setShowInitialContent] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [queryId, setQueryId] = useState(chatData?.lastQueryId || "");
-  const [chatId, setChatId] = useState(chatData?.chatId || "");
-  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(
-    chatData?.vote || 0
-  );
+  const [queryId, setQueryId] = useState("");
+  const [chatId, setChatId] = useState("");
+  const [isChatOwner, setIsChatOwner] = useState(true);
+  const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
   const { data: session } = useSession();
 
   console.log({ session });
 
   useEffect(() => {
-    if (messages.length > 0) {
-      setShowInitialContent(false);
-    }
-  }, [messages]);
-
-  useEffect(() => {
     if (initialError) {
       toast.error(initialError, toastConfig);
     }
-  }, []);
+  }, [initialError]);
+
+  useEffect(() => {
+    if (chatData) {
+      setMessages(chatData.messages);
+      setQueryId(chatData.lastQueryId);
+      setChatId(chatData.chatId);
+      setIsChatOwner(chatData.isChatOwner);
+      setCurrentVote(chatData.vote);
+    }
+  }, [chatData]);
 
   // TODO: refactor this function
   const handleSendMessage = async (message: string) => {
@@ -96,6 +101,7 @@ export const Home = ({
       setQueryId(data.query_id);
       setChatId(data.chat_id);
       setCurrentVote(data.user_vote);
+      setIsChatOwner(true);
     } catch (error) {
       console.log({ errorFetchingResponse: error });
       let errorMessage =
@@ -114,21 +120,26 @@ export const Home = ({
   };
 
   const handleBackClick = () => {
-    setShowInitialContent(true);
     setMessages([]);
     setQueryId("");
     setChatId("");
+    setIsChatOwner(true);
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       <Header />
       <main className="flex-grow overflow-hidden">
-        {showInitialContent ? (
+        {isGettingChat ? (
+          <div className="flex justify-center items-center my-4">
+            <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
+          </div>
+        ) : messages.length === 0 ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}
             onSendMessage={handleSendMessage}
             isLoading={isLoading}
+            isChatOwner={isChatOwner}
           />
         ) : (
           <ChatInterface
@@ -140,6 +151,7 @@ export const Home = ({
             onSendMessage={handleSendMessage}
             currentVote={currentVote}
             setCurrentVote={setCurrentVote}
+            isChatOwner={isChatOwner}
           />
         )}
       </main>

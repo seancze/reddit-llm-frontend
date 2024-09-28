@@ -16,6 +16,7 @@ interface ChatInterfaceProps {
   onSendMessage: (message: string) => void;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
+  isChatOwner: boolean;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -27,6 +28,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onSendMessage,
   currentVote,
   setCurrentVote,
+  isChatOwner,
 }) => {
   const { data: session } = useSession();
 
@@ -101,7 +103,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <ChatBox onSend={onSendMessage} isLoading={isLoading} />
+      <ChatBox
+        onSend={onSendMessage}
+        isLoading={isLoading}
+        isChatOwner={isChatOwner}
+      />
     </div>
   );
 };
