@@ -7,6 +7,7 @@ import * as Yup from "yup";
 interface ChatBoxProps {
   onSend: (message: string) => void;
   isLoading: boolean;
+  isChatOwner: boolean;
 }
 
 const validationSchema = Yup.object().shape({
@@ -18,6 +19,7 @@ const validationSchema = Yup.object().shape({
 export const ChatBox: React.FC<ChatBoxProps> = ({
   onSend,
   isLoading,
+  isChatOwner,
 }: ChatBoxProps) => {
   const { data: session } = useSession();
 
@@ -32,7 +34,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     }
   };
 
-  const isDisabled = !session;
+  const isDisabled = !(session && isChatOwner);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
@@ -57,6 +59,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
                 placeholder={
                   !session
                     ? "Login to ask your own question"
+                    : !isChatOwner
+                    ? "Start your own chat to ask a question"
                     : "Type your question here..."
                 }
                 disabled={isDisabled}

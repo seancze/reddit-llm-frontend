@@ -9,6 +9,7 @@ import { toastConfig } from "@/app/utils/constants";
 
 interface FeedbackButtonsProps {
   queryId: string;
+  chatId: string;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
 }
@@ -20,6 +21,7 @@ type DebouncedFunction = {
 
 export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   queryId,
+  chatId,
   currentVote,
   setCurrentVote,
 }) => {
@@ -39,7 +41,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   );
 
   const handleShare = async () => {
-    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}query/${queryId}`;
+    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}chat/${chatId}`;
     console.log({ shareUrl });
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -82,7 +84,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         debouncedVoteRef.current.cancel();
       }
     };
-  }, []);
+  }, [session?.jwt]);
 
   return (
     <div className="mt-8">

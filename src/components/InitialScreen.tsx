@@ -6,12 +6,14 @@ interface InitialScreenProps {
   onQuestionClick: (message: string) => void;
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  isChatOwner: boolean;
 }
 
 export const InitialScreen: React.FC<InitialScreenProps> = ({
   onQuestionClick,
   onSendMessage,
   isLoading,
+  isChatOwner,
 }) => {
   return (
     <div className="min-h-screen bg-gray-900 py-6 flex flex-col justify-between sm:py-12">
@@ -27,7 +29,11 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
 
       <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 shadow-md">
         <div className="max-w-3xl mx-auto">
-          <ChatBox onSend={onSendMessage} isLoading={isLoading} />
+          <ChatBox
+            onSend={onSendMessage}
+            isLoading={isLoading}
+            isChatOwner={isChatOwner}
+          />
         </div>
       </div>
     </div>

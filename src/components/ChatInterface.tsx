@@ -9,22 +9,26 @@ import { ChatBox } from "@/components/ChatBox";
 
 interface ChatInterfaceProps {
   queryId: string;
+  chatId: string;
   messages: Message[];
   isLoading: boolean;
   onBackClick: () => void;
   onSendMessage: (message: string) => void;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
+  isChatOwner: boolean;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   queryId,
+  chatId,
   messages,
   isLoading,
   onBackClick,
   onSendMessage,
   currentVote,
   setCurrentVote,
+  isChatOwner,
 }) => {
   const { data: session } = useSession();
 
@@ -62,14 +66,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
-                  message.type === "user"
+                  message.role === "user"
                     ? "bg-cyan-700 text-white"
                     : "bg-gray-700 text-white border border-cyan-700"
                 }`}
               >
                 <>
                   <p className="font-medium mb-1">
-                    {message.type === "user" ? "Question:" : "Response:"}
+                    {message.role === "user" ? "Question:" : "Response:"}
                   </p>
                   <ReactMarkdown
                     className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
@@ -88,16 +92,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
             </div>
           )}
-          {!isLoading && session && messages.length === 2 && (
+          {/* only show feedback button when response from AI is generated; this happens when messages.length is even */}
+          {!isLoading && session && messages.length % 2 == 0 && (
             <FeedbackButtons
               queryId={queryId}
+              chatId={chatId}
               currentVote={currentVote}
               setCurrentVote={setCurrentVote}
             />
           )}
         </div>
       </div>
-      <ChatBox onSend={onSendMessage} isLoading={isLoading} />
+      <ChatBox
+        onSend={onSendMessage}
+        isLoading={isLoading}
+        isChatOwner={isChatOwner}
+      />
     </div>
   );
 };
