@@ -45,6 +45,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     ),
   };
 
+  const formatMessageContent = (content: string) => {
+    return content.replace(/\*\*Similar posts\*\*/g, "\\\n**Similar posts**");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-900">
       <div className="flex-grow overflow-auto pb-32">
@@ -81,7 +85,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     urlTransform={urlTransform}
                     components={components}
                   >
-                    {message.content}
+                    {formatMessageContent(message.content)}
                   </Markdown>
                 </>
               </div>
