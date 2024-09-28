@@ -76,9 +76,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 }`}
               >
                 <>
-                  <p className="font-medium mb-1">
-                    {message.role === "user" ? "Question:" : "Response:"}
-                  </p>
                   <Markdown
                     className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
                     remarkPlugins={[remarkGfm]}
