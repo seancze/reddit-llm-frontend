@@ -41,7 +41,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   );
 
   const handleShare = async () => {
-    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}query/${chatId}`;
+    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}chat/${chatId}`;
     console.log({ shareUrl });
     try {
       await navigator.clipboard.writeText(shareUrl);
