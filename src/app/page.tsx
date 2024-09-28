@@ -8,27 +8,24 @@ import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { questionsDict, toastConfig } from "@/app/utils/constants";
-import { QueryData } from "@/types/queryData";
+import { toastConfig } from "@/app/utils/constants";
+import { ChatData } from "@/types/chatData";
 
 export const Home = ({
-  initialQueryId,
-  queryData,
+  chatData,
   initialError,
 }: {
   initialQueryId?: string;
-  queryData?: QueryData;
+  chatData?: ChatData;
   initialError?: string;
 }) => {
-  const [messages, setMessages] = useState<Message[]>(
-    queryData?.messages || []
-  );
+  const [messages, setMessages] = useState<Message[]>(chatData?.messages || []);
   const [showInitialContent, setShowInitialContent] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [queryId, setQueryId] = useState(initialQueryId || "");
-  const [chatId, setChatId] = useState("");
+  const [queryId, setQueryId] = useState(chatData?.lastQueryId || "");
+  const [chatId, setChatId] = useState(chatData?.chatId || "");
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(
-    queryData?.vote || 0
+    chatData?.vote || 0
   );
   const { data: session } = useSession();
 
@@ -56,37 +53,21 @@ export const Home = ({
 
     try {
       let data;
-      let response;
-      const messageLower = message.toLowerCase();
-      if (questionsDict[messageLower]) {
-        // TODO: change this to only trigger when example question is clicked; if a question is asked instead, should return a custom response
-        response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query/${questionsDict[messageLower]}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${session?.jwt}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session?.jwt}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              query: messageWithQuestion,
-              username: session?.user?.name,
-              chat_id: chatId,
-            }),
-          }
-        );
-      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.jwt}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: messageWithQuestion,
+            username: session?.user?.name,
+            chat_id: chatId,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -123,6 +104,8 @@ export const Home = ({
   const handleBackClick = () => {
     setShowInitialContent(true);
     setMessages([]);
+    setQueryId("");
+    setChatId("");
   };
 
   return (
