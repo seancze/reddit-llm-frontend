@@ -3,7 +3,7 @@ import { questionsDict } from "@/app/utils/constants";
 import { useSession } from "next-auth/react";
 
 interface ExampleQuestionsProps {
-  onQuestionClick: (question: string) => void;
+  onQuestionClick: (question: string, key?: string) => void;
 }
 
 export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
@@ -17,8 +17,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
           <button
             key={key}
             className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white border border-gray-600 hover:border-gray-400 transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            // if the user is not logged in, get the question by its id because the user should only be able to get a cached result
-            onClick={() => onQuestionClick(!session ? key : question)}
+            onClick={() => onQuestionClick(question, key)}
           >
             {question}
           </button>

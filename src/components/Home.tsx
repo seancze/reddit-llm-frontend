@@ -62,7 +62,7 @@ export const Home = ({
   }, [initialError]);
 
   // TODO: refactor this function
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (message: string, key?: string) => {
     setIsLoading(true);
     const messageWithQuestion: Message[] = [
       ...messages,
@@ -76,7 +76,7 @@ export const Home = ({
       // if the user is not logged in, the user should only be able to get cached results
       if (!session) {
         response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${message}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${key}`,
           {
             method: "GET",
           }
