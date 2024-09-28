@@ -84,7 +84,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         debouncedVoteRef.current.cancel();
       }
     };
-  }, []);
+  }, [session?.jwt]);
 
   return (
     <div className="mt-8">
