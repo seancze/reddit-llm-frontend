@@ -2,7 +2,7 @@ import React from "react";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
 import { Message } from "@/types/message";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useSession } from "next-auth/react";
 import { ChatBox } from "@/components/ChatBox";
@@ -75,14 +75,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   <p className="font-medium mb-1">
                     {message.role === "user" ? "Question:" : "Response:"}
                   </p>
-                  <ReactMarkdown
+                  <Markdown
                     className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
                     remarkPlugins={[remarkGfm]}
                     urlTransform={urlTransform}
                     components={components}
                   >
                     {message.content}
-                  </ReactMarkdown>
+                  </Markdown>
                 </>
               </div>
             ))}
