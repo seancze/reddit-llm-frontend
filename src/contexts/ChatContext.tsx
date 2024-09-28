@@ -17,8 +17,6 @@ interface ChatContextType {
   setIsChatOwner: React.Dispatch<React.SetStateAction<boolean>>;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
-  isGettingChat: boolean;
-  setIsGettingChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -32,7 +30,6 @@ export const ChatProvider: React.FC<{
   const [chatId, setChatId] = useState("");
   const [isChatOwner, setIsChatOwner] = useState(true);
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
-  const [isGettingChat, setIsGettingChat] = useState(false);
 
   return (
     <ChatContext.Provider
@@ -49,8 +46,6 @@ export const ChatProvider: React.FC<{
         setIsChatOwner,
         currentVote,
         setCurrentVote,
-        isGettingChat,
-        setIsGettingChat,
       }}
     >
       {children}

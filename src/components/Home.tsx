@@ -9,7 +9,6 @@ import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
-import { FaSpinner } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
 
@@ -31,7 +30,6 @@ export const Home = ({
     setIsChatOwner,
     currentVote,
     setCurrentVote,
-    isGettingChat,
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
@@ -143,11 +141,7 @@ export const Home = ({
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       <Header />
       <main className="flex-grow overflow-hidden">
-        {isGettingChat ? (
-          <div className="flex justify-center items-center my-4">
-            <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
-          </div>
-        ) : messages.length === 0 ? (
+        {messages.length === 0 ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}
             onSendMessage={handleSendMessage}
