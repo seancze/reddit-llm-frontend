@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
@@ -43,6 +43,7 @@ export const Home = ({
     }
   }, []);
 
+  // TODO: refactor this function
   const handleSendMessage = async (message: string) => {
     setIsLoading(true);
     const messageWithQuestion: Message[] = [
@@ -53,21 +54,32 @@ export const Home = ({
 
     try {
       let data;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session?.jwt}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: messageWithQuestion,
-            username: session?.user?.name,
-            chat_id: chatId,
-          }),
-        }
-      );
+      let response;
+      // if the user is not logged in, the user should only be able to get cached results
+      if (!session) {
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${message}`,
+          {
+            method: "GET",
+          }
+        );
+      } else {
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session?.jwt}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              query: messageWithQuestion,
+              username: session?.user?.name,
+              chat_id: chatId,
+            }),
+          }
+        );
+      }
       if (!response.ok) {
         throw new Error(response.statusText);
       }
