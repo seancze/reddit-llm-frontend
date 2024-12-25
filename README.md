@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Reddit LLM (Frontend)
+
+## Description
+
+As the name suggests, this is a web application that functions as a ChatGPT enriched with data from the SGExams subreddit.
+
+### Inspiration
+
+Initially, I was investigating if online anonymous communities can help us better understand the needs of youths and how to tackle them. SGExams had been tremendously helpful in my research. At the same time, I found myself needing to perform many auxiliary data analysis tasks which were dreadfully time-consuming. As a CS student, I naturally over-optimised for this problem by building an entire web application that allows me to perform my data analysis tasks by simply asking a question.
+
+To give back to the SGExams subreddit, I made this web application public and shared it with the community [here](https://www.reddit.com/r/SGExams/comments/1f6fm1p/i_built_a_chatgpt_for_sgexams/).
+
 
 ## Getting Started
 
@@ -19,18 +30,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
