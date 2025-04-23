@@ -79,6 +79,10 @@ export const Home = ({
             method: "GET",
           }
         );
+        toast.warn(
+          "Hey, you are seeing a cached reply. Login to get a new reply!",
+          toastConfig
+        );
       } else {
         response = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
