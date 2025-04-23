@@ -17,6 +17,6 @@ export const toastConfig: ToastOptions = {
   autoClose: 3000,
   hideProgressBar: false,
   closeOnClick: true,
-  pauseOnHover: false,
+  pauseOnHover: true,
   progress: undefined,
 };
