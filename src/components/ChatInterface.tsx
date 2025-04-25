@@ -51,7 +51,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex flex-col h-screen bg-gray-900">
-      <div className="flex-grow overflow-auto pb-32">
+      <div className="grow overflow-auto pb-32">
         <div className="max-w-4xl mx-auto w-full px-4 py-6">
           <button
             onClick={onBackClick}
@@ -59,7 +59,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               isLoading
                 ? "bg-gray-600 cursor-not-allowed"
                 : "bg-cyan-700 hover:bg-cyan-800"
-            } mb-4 p-2 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
+            } mb-4 p-2 text-white rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
             aria-label="Back to start"
             disabled={isLoading}
           >

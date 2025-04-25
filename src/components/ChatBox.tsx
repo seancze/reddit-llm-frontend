@@ -49,7 +49,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
               <Field
                 type="text"
                 name="message"
-                className={`w-full px-4 py-3 pr-12 border border-gray-600 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+                className={`w-full px-4 py-3 pr-12 border border-gray-600 rounded-full focus:outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-200
                 ${
                   isDisabled
                     ? "cursor-not-allowed bg-gray-700"
@@ -67,7 +67,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
               />
               <button
                 type="submit"
-                className={`absolute right-2 p-2 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400
+                className={`absolute right-2 p-2 text-white rounded-full focus:outline-hidden focus:ring-2 focus:ring-blue-400
                 ${
                   isDisabled
                     ? "bg-gray-600 cursor-not-allowed"
