@@ -144,7 +144,7 @@ export const Home = ({
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       <Header />
-      <main className="flex-grow overflow-hidden">
+      <main className="grow overflow-hidden">
         {messages.length === 0 ? (
           <InitialScreen
             onQuestionClick={handleSendMessage}

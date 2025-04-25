@@ -16,7 +16,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
         return (
           <button
             key={key}
-            className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white border border-gray-600 hover:border-gray-400 transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="bg-gray-700 hover:bg-gray-600 rounded-lg p-2 text-xs md:text-sm text-left text-white border border-gray-600 hover:border-gray-400 transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
             onClick={() => onQuestionClick(question, key)}
           >
             {question}
