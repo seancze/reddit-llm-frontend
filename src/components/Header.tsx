@@ -14,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ onBackClick }) => {
 
   return (
     <header className="z-10 border-b">
-      <div className="mx-auto flex items-center justify-end md:justify-between px-8 py-2 text-sm">
+      <div className="mx-auto flex items-center justify-end md:justify-between px-4 md:px-8 py-2 text-sm">
         <Button
           variant={"ghost"}
           onClick={onBackClick}
