@@ -1,6 +1,6 @@
 import { Description } from "@/components/Description";
 import { ExampleQuestions } from "@/components/ExampleQuestions";
-import { ChatBoxV2 } from "@/components/ChatBoxV2";
+import { ChatBox } from "@/components/ChatBox";
 
 interface InitialScreenProps {
   onQuestionClick: (message: string) => void;
@@ -23,7 +23,11 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
           <div className="my-4">
             <ExampleQuestions onQuestionClick={onQuestionClick} />
           </div>
-          <ChatBoxV2 />
+          <ChatBox
+            onSend={onSendMessage}
+            isLoading={isLoading}
+            isChatOwner={isChatOwner}
+          />
         </div>
       </div>
     </div>
