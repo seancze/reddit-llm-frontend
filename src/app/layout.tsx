@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { auth } from "@/auth";
 import { HotjarInitialiser } from "@/components/HotjarInitialiser";
 import { ChatProvider } from "@/contexts/ChatContext";
@@ -20,11 +21,18 @@ export default async function RootLayout({
 }) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider session={session}>
-          <ChatProvider>{children}</ChatProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider session={session}>
+            <ChatProvider>{children}</ChatProvider>
+          </AuthProvider>
+        </ThemeProvider>
 
         <HotjarInitialiser />
       </body>
