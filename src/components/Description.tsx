@@ -4,11 +4,11 @@ export const Description: React.FC = () => {
   const { data: session } = useSession();
 
   return (
-    <div className="text-center mb-8">
-      <h1 className="text-2xl font-bold mb-2 text-white">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-2">
         Your reddit questions, answered
       </h1>
-      <p className="text-gray-300">
+      <p>
         Click one of our questions below
         {!session ? (
           <>

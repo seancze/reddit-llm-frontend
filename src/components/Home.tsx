@@ -142,7 +142,7 @@ export const Home = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white">
+    <div className="flex flex-col h-screen bg-background text-foreground">
       <Header />
       <main className="grow overflow-hidden">
         {messages.length === 0 ? (
