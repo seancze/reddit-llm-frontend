@@ -94,7 +94,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             ${
               currentVote === 1
                 ? "bg-green-600 text-white transform scale-105"
-                : "hover:bg-green-600 hover:text-white bg-gray-700 text-green-400 hover:scale-105"
+                : "hover:bg-green-600 hover:text-white bg-secondary text-green-400 hover:scale-105"
             }`}
           onClick={() => handleVote(1)}
         >
@@ -106,7 +106,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             ${
               currentVote === -1
                 ? "bg-red-600 text-white transform scale-105"
-                : "hover:bg-red-600 hover:text-white bg-gray-700 text-red-400 hover:scale-105"
+                : "hover:bg-red-600 hover:text-white bg-secondary text-red-400 hover:scale-105"
             }`}
           onClick={() => handleVote(-1)}
         >
@@ -117,7 +117,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           <button
             onClick={handleShare}
             className="flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
-              hover:bg-cyan-600 hover:text-white bg-gray-700 text-cyan-400 hover:scale-105"
+              hover:bg-cyan-600 hover:text-white bg-secondary text-cyan-400 hover:scale-105"
           >
             <FaShare className="mr-2" /> Share
           </button>
