@@ -39,7 +39,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     }
   };
 
-  const isDisabled = !(session && isChatOwner);
+  const isDisabled = !(session && isChatOwner && !isLoading);
   return (
     <Formik
       initialValues={{ query: "" }}
