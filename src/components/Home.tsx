@@ -12,6 +12,7 @@ import { toastConfig } from "@/app/utils/constants";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export const Home = ({
   initialChatData,
@@ -35,6 +36,7 @@ export const Home = ({
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const { theme } = useTheme();
 
   console.log({ session });
 
@@ -169,7 +171,7 @@ export const Home = ({
           />
         )}
       </main>
-      <ToastContainer theme="dark" />
+      <ToastContainer theme={theme} />
     </div>
   );
 };
