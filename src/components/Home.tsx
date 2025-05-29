@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
+import { useRouter } from "next/navigation";
 
 export const Home = ({
   initialChatData,
@@ -33,6 +34,7 @@ export const Home = ({
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   console.log({ session });
 
@@ -139,11 +141,12 @@ export const Home = ({
     setQueryId("");
     setChatId("");
     setIsChatOwner(true);
+    router.push("/");
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
-      <Header />
+    <div className="flex flex-col h-screen bg-background text-foreground-primary">
+      <Header onBackClick={handleBackClick} />
       <main className="grow overflow-hidden">
         {messages.length === 0 ? (
           <InitialScreen

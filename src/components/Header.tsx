@@ -3,16 +3,25 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { ModeToggle } from "@/components/ModeToggle";
+import { Button } from "@/components/ui/button";
 
-export const Header = () => {
+interface HeaderProps {
+  onBackClick: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onBackClick }) => {
   const { data: session } = useSession();
 
   return (
     <header className="z-10 border-b">
       <div className="mx-auto flex items-center justify-end md:justify-between px-8 py-2 text-sm">
-        <span className="text-lg font-semibold hidden md:block">
+        <Button
+          variant={"ghost"}
+          onClick={onBackClick}
+          className="text-lg font-semibold hidden md:block cursor-pointer"
+        >
           ChatGPT For SGExams
-        </span>
+        </Button>
 
         <div className="flex items-center">
           {session ? (
