@@ -9,7 +9,7 @@ export const Description: React.FC = () => {
         Your reddit questions, answered
       </h1>
       <p>
-        Click one of our questions below
+        Click a question below
         {!session ? (
           <>
             {" or "}
