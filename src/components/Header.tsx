@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ onBackClick }) => {
   const { data: session } = useSession();
 
   return (
-    <header className="z-10 border-b">
+    <header className="z-10 border-b shadow-lg">
       <div className="mx-auto flex items-center justify-end md:justify-between px-4 md:px-8 py-2 text-sm">
         <Button
           variant={"ghost"}
