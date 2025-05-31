@@ -50,7 +50,8 @@ const getChatData = async (pageId: string): Promise<ChatData> => {
   }
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const chatData = await getChatData(params.id);
 
