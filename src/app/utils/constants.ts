@@ -10,7 +10,8 @@ export const questionsDict: QuestionsDict = {
     "Group all posts by category in descending order and provide a % breakdown",
   "66f7cb23aa0e750df917b2ee": "What are the top 3 most popular posts?",
   "66d44d905e53e4575d513fdc": "What are some time management tips?",
-  "6838643efae0964b6e8e290a": "Give me the top 3 comments"
+  "6838643efae0964b6e8e290a": "Give me the top 3 comments",
+  "683aa8c11ef1ebd16e107db1": "Summarise the issues discussed in the top NSFW posts"
 };
 
 export const toastConfig: ToastOptions = {
