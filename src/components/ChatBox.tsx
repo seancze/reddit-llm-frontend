@@ -47,10 +47,10 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
       onSubmit={handleSubmit}
     >
       {(formik) => (
-        <>
+        // mb-20 is required to show the full chatbox component in the /chat screen
+        <div className="mb-20">
           <AIInput
-            // mb-20 is required to show the full chatbox component in the /chat screen
-            className="shadow-lg mb-20"
+            className="shadow-lg"
             onSubmit={(e) => {
               e.preventDefault();
               formik.handleSubmit(e);
@@ -88,7 +88,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
               );
             }}
           </ErrorMessage>
-        </>
+        </div>
       )}
     </Formik>
   );
