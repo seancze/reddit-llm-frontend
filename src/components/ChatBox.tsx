@@ -1,7 +1,14 @@
-import React from "react";
-import { FaPaperPlane } from "react-icons/fa";
+"use client";
+import {
+  AIInput,
+  AIInputSubmit,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputTools,
+} from "@/components/ui/kibo-ui/ai/input";
+import { SendIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { Formik, Form, Field } from "formik";
+import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 interface ChatBoxProps {
@@ -11,9 +18,7 @@ interface ChatBoxProps {
 }
 
 const validationSchema = Yup.object().shape({
-  message: Yup.string()
-    .min(10, "Question must be at least 10 characters")
-    .required("Question is required"),
+  query: Yup.string().min(10, "Question must be at least 10 characters"),
 });
 
 export const ChatBox: React.FC<ChatBoxProps> = ({
@@ -24,68 +29,67 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
   const { data: session } = useSession();
 
   const handleSubmit = async (
-    values: { message: string },
+    values: { query: string },
     { resetForm }: { resetForm: () => void }
   ) => {
-    if (values.message.trim() && !isLoading && session) {
+    if (values.query.trim() && !isLoading && session) {
       // reset the form first to clear the input field in the frontend
       resetForm();
-      await onSend(values.message);
+      await onSend(values.query);
     }
   };
 
-  const isDisabled = !(session && isChatOwner);
-
+  const isDisabled = !(session && isChatOwner && !isLoading);
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
-      <Formik
-        initialValues={{ message: "" }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ errors, touched, isValid, dirty }) => (
-          <Form className="w-full max-w-3xl mx-auto">
-            <div className="relative flex items-center">
-              <Field
-                type="text"
-                name="message"
-                className={`w-full px-4 py-3 pr-12 border border-gray-600 rounded-full focus:outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-200
-                ${
-                  isDisabled
-                    ? "cursor-not-allowed bg-gray-700"
-                    : "text-white bg-gray-800"
-                }
-                ${errors.message && touched.message ? "border-red-500" : ""}`}
-                placeholder={
-                  !session
-                    ? "Login to ask your own question"
-                    : !isChatOwner
-                    ? "Start your own chat to ask a question"
-                    : "Type your question here..."
-                }
-                disabled={isDisabled}
-              />
-              <button
-                type="submit"
-                className={`absolute right-2 p-2 text-white rounded-full focus:outline-hidden focus:ring-2 focus:ring-blue-400
-                ${
-                  isDisabled
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-cyan-600 hover:bg-cyan-700"
-                }`}
-                // NOTE: we do not disable the button if the input is invalid (i.e. !isValid || !dirty)
-                // this is done so that the user can still submit the form which will trigger the display of the error message
-                disabled={isDisabled}
-              >
-                <FaPaperPlane className="w-5 h-5" />
-              </button>
-            </div>
-            {errors.message && touched.message && (
-              <div className="text-red-500 text-sm mt-1">{errors.message}</div>
-            )}
-          </Form>
-        )}
-      </Formik>
-    </div>
+    <Formik
+      initialValues={{ query: "" }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {(formik) => (
+        <>
+          <AIInput
+            // mb-20 is required to show the full chatbox component in the /chat screen
+            className="shadow-lg mb-20"
+            onSubmit={(e) => {
+              e.preventDefault();
+              formik.handleSubmit(e);
+            }}
+          >
+            <AIInputTextarea
+              name="query"
+              value={formik.values.query}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={isDisabled}
+              placeholder={
+                !session
+                  ? "Login to ask a question"
+                  : !isChatOwner
+                  ? "Start your own chat to ask a question"
+                  : "Type your question here..."
+              }
+            />
+            <AIInputToolbar>
+              <AIInputTools />
+              {/* // NOTE: we do not disable the button if the input is invalid (i.e. !isValid || !dirty)
+                // this is done so that the user can still submit the form which will trigger the display of the error message */}
+              <AIInputSubmit disabled={isDisabled}>
+                <SendIcon size={16} />
+              </AIInputSubmit>
+            </AIInputToolbar>
+          </AIInput>
+          <ErrorMessage name="query">
+            {(msg) => {
+              return (
+                <p className="text-red-500 text-sm text-right" role="alert">
+                  {msg}
+                </p>
+              );
+            }}
+          </ErrorMessage>
+        </>
+      )}
+    </Formik>
   );
 };

@@ -6,6 +6,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useSession } from "next-auth/react";
 import { ChatBox } from "@/components/ChatBox";
+import { Button } from "@/components/ui/button";
 
 interface ChatInterfaceProps {
   queryId: string;
@@ -34,12 +35,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const urlTransform = (href: string) => href;
 
+  // used to customise style of hyperlinks in markdown
   const components = {
     a: ({ ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
       <a
         target="_blank"
         rel="noopener noreferrer"
-        className="text-cyan-500 hover:text-cyan-400 underline"
+        className="dark:text-cyan-500 dark:hover:text-cyan-400 text-[#1b76cf] hover:text-[#135391] underline"
         {...props}
       />
     ),
@@ -50,34 +52,32 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
-      <div className="grow overflow-auto pb-32">
-        <div className="max-w-4xl mx-auto w-full px-4 py-6">
-          <button
+    <div className="flex flex-col h-screen max-w-4xl mx-auto px-4">
+      <div className="grow overflow-y-auto pb-4">
+        {/* px-2 ensures that thumbs up button does not go out of bounds when hovered */}
+        <div className="w-full py-6 px-2">
+          <Button
             onClick={onBackClick}
-            className={`${
-              isLoading
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-cyan-700 hover:bg-cyan-800"
-            } mb-4 p-2 text-white rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 shadow-md`}
+            className={`mb-4 rounded-full text-primary-foreground bg-primary`}
             aria-label="Back to start"
             disabled={isLoading}
+            size={"icon"}
           >
-            <FaArrowLeft className="w-6 h-6" />
-          </button>
+            <FaArrowLeft />
+          </Button>
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
                   message.role === "user"
-                    ? "bg-cyan-700 text-white"
-                    : "bg-gray-700 text-white border border-cyan-700"
+                    ? "text-primary-foreground bg-primary"
+                    : "border text-secondary-foreground bg-secondary"
                 }`}
               >
                 <>
                   <Markdown
-                    className="prose-invert max-w-none prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
+                    className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline"
                     remarkPlugins={[remarkGfm]}
                     urlTransform={urlTransform}
                     components={components}
@@ -90,7 +90,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
           {isLoading && (
             <div className="flex justify-center items-center my-4">
-              <FaSpinner className="animate-spin text-cyan-500 text-4xl" />
+              <FaSpinner className="animate-spin text-4xl" />
             </div>
           )}
           {/* only show feedback button when response from AI is generated; this happens when messages.length is even */}
@@ -104,11 +104,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <ChatBox
-        onSend={onSendMessage}
-        isLoading={isLoading}
-        isChatOwner={isChatOwner}
-      />
+      <div>
+        <ChatBox
+          onSend={onSendMessage}
+          isLoading={isLoading}
+          isChatOwner={isChatOwner}
+        />
+      </div>
     </div>
   );
 };
