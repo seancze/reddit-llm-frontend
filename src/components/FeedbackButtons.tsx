@@ -90,7 +90,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
     <div className="mt-8">
       <div className="flex space-x-4">
         <button
-          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md border
             ${
               currentVote === 1
                 ? "bg-green-600 text-white transform scale-105"
@@ -102,7 +102,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         </button>
 
         <button
-          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+          className={`flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md border
             ${
               currentVote === -1
                 ? "bg-red-600 text-white transform scale-105"
@@ -116,7 +116,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         <div className="relative">
           <button
             onClick={handleShare}
-            className="flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md
+            className="flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md border
               hover:bg-cyan-600 hover:text-white bg-secondary text-cyan-400 hover:scale-105"
           >
             <FaShare className="mr-2" /> Share
