@@ -104,8 +104,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      {/* mb-20 is required to show the full chatbox component */}
-      <div className="mb-20">
+      <div>
         <ChatBox
           onSend={onSendMessage}
           isLoading={isLoading}

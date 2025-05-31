@@ -49,6 +49,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
       {(formik) => (
         <>
           <AIInput
+            // mb-20 is required to show the full chatbox component in the /chat screen
+            className="shadow-lg mb-20"
             onSubmit={(e) => {
               e.preventDefault();
               formik.handleSubmit(e);
