@@ -16,10 +16,14 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
   isChatOwner,
 }) => {
   return (
-    <div className="min-h-screen bg-background text-foreground py-6 flex flex-col justify-between sm:py-12">
-      <div className="relative py-3 sm:max-w-4xl sm:mx-auto w-full">
-        <div className="relative px-4 py-10 sm:p-12">
+    <div className="min-h-screen bg-background text-foreground py-6 flex flex-col justify-center sm:justify-between sm:py-12">
+      <div className="relative py-3 sm:max-w-4xl sm:mx-auto w-full px-4 mb-60">
+        <div className="relative py-10 sm:p-12">
           <Description />
+        </div>
+
+        {/* only flush components to bottom on small screens */}
+        <div className="fixed bottom-0 left-0 right-0 max-w-4xl px-4 sm:relative">
           <div className="my-4">
             <ExampleQuestions onQuestionClick={onQuestionClick} />
           </div>
