@@ -508,7 +508,7 @@ export const CodeBlockCopyButton = ({
   };
 
   if (asChild) {
-    return cloneElement(children as ReactElement, {
+    return cloneElement(children as ReactElement<any>, {
       onClick: copyToClipboard,
     });
   }
