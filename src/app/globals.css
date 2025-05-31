@@ -101,14 +101,14 @@ ul {
   --card-foreground: #101828;
   --popover: #e3f8fb;
   --popover-foreground: #101828;
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: #1ecbe1;
+  --primary-foreground: #101828;
   --secondary: #cef1f7;
-  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --secondary-foreground: #101828;
   --muted: #cef1f7;
   --muted-foreground: oklch(0.554 0.046 257.417);
   --accent: #cef1f7;
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --accent-foreground: #1ecbe1;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #007595;
   --input: #007595;
@@ -120,10 +120,10 @@ ul {
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.984 0.003 247.858);
   --sidebar-foreground: #101828;
-  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary: #1ecbe1;
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
   --sidebar-accent: #cef1f7;
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-accent-foreground: #1ecbe1;
   --sidebar-border: #007595;
   --sidebar-ring: oklch(0.704 0.04 256.788);
   --background: #e3f8fb;
@@ -137,12 +137,12 @@ ul {
 .dark {
   --background: #101828;
   --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
+  --card: #1ecbe1;
   --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
+  --popover: #1ecbe1;
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: #007595;
-  --primary-foreground: oklch(0.208 0.042 265.755);
+  --primary-foreground: #fff;
   --secondary: #364153;
   --secondary-foreground: oklch(0.984 0.003 247.858);
   --muted: #364153;
@@ -158,7 +158,7 @@ ul {
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar: #1ecbe1;
   --sidebar-foreground: oklch(0.984 0.003 247.858);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
