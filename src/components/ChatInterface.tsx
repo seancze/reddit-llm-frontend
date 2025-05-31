@@ -35,6 +35,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const urlTransform = (href: string) => href;
 
+  // used to customise style of hyperlinks in markdown
   const components = {
     a: ({ ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
       <a
@@ -53,7 +54,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4">
       <div className="grow overflow-y-auto pb-4">
-        <div className="w-full py-6">
+        {/* px-2 ensures that thumbs up button does not go out of bounds when hovered */}
+        <div className="w-full py-6 px-2">
           <Button
             onClick={onBackClick}
             className={`mb-4 rounded-full text-primary-foreground bg-primary`}
