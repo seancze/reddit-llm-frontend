@@ -6,7 +6,7 @@ export const Description: React.FC = () => {
   return (
     <div className="text-center">
       <h1 className="text-2xl font-bold mb-2">
-        Your reddit questions, answered
+        Your Reddit questions, answered
       </h1>
       <p>
         Click a question below
