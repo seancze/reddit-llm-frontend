@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { auth } from "@/auth";
 import { HotjarInitialiser } from "@/components/HotjarInitialiser";
 import { ChatProvider } from "@/contexts/ChatContext";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +32,19 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider session={session}>
-            <ChatProvider>{children}</ChatProvider>
+            <ChatProvider>
+              <SidebarProvider
+                style={
+                  {
+                    // adapted from: https://ui.shadcn.com/blocks (app/dashboard/page.tsx)
+                    "--header-height": "calc(var(--spacing) * 12)",
+                  } as React.CSSProperties
+                }
+              >
+                <AppSidebar />
+                {children}
+              </SidebarProvider>
+            </ChatProvider>
           </AuthProvider>
         </ThemeProvider>
 

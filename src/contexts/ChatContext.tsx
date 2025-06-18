@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { Message } from "@/types/message";
+import { useRouter } from "next/navigation";
 
 interface ChatContextType {
   messages: Message[];
@@ -17,6 +18,7 @@ interface ChatContextType {
   setIsChatOwner: React.Dispatch<React.SetStateAction<boolean>>;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
+  handleBackClick: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -30,6 +32,14 @@ export const ChatProvider: React.FC<{
   const [chatId, setChatId] = useState("");
   const [isChatOwner, setIsChatOwner] = useState(true);
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
+  const router = useRouter();
+  const handleBackClick = () => {
+    setMessages([]);
+    setQueryId("");
+    setChatId("");
+    setIsChatOwner(true);
+    router.push("/");
+  };
 
   return (
     <ChatContext.Provider
@@ -46,6 +56,7 @@ export const ChatProvider: React.FC<{
         setIsChatOwner,
         currentVote,
         setCurrentVote,
+        handleBackClick,
       }}
     >
       {children}

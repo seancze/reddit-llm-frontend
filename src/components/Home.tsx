@@ -13,6 +13,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { SidebarInset } from "@/components/ui/sidebar";
 
 export const Home = ({
   initialChatData,
@@ -32,6 +33,7 @@ export const Home = ({
     setIsChatOwner,
     currentVote,
     setCurrentVote,
+    handleBackClick,
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
@@ -138,40 +140,34 @@ export const Home = ({
     }
   };
 
-  const handleBackClick = () => {
-    setMessages([]);
-    setQueryId("");
-    setChatId("");
-    setIsChatOwner(true);
-    router.push("/");
-  };
-
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
-      <Header onBackClick={handleBackClick} />
-      <main className="grow overflow-hidden">
-        {messages.length === 0 ? (
-          <InitialScreen
-            onQuestionClick={handleSendMessage}
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            isChatOwner={isChatOwner}
-          />
-        ) : (
-          <ChatInterface
-            queryId={queryId}
-            chatId={chatId}
-            messages={messages}
-            isLoading={isLoading}
-            onBackClick={handleBackClick}
-            onSendMessage={handleSendMessage}
-            currentVote={currentVote}
-            setCurrentVote={setCurrentVote}
-            isChatOwner={isChatOwner}
-          />
-        )}
-      </main>
-      <ToastContainer theme={theme} />
-    </div>
+    <SidebarInset>
+      <div className="flex flex-col bg-background text-foreground">
+        <Header onBackClick={handleBackClick} />
+        <main className="grow overflow-hidden">
+          {messages.length === 0 ? (
+            <InitialScreen
+              onQuestionClick={handleSendMessage}
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading}
+              isChatOwner={isChatOwner}
+            />
+          ) : (
+            <ChatInterface
+              queryId={queryId}
+              chatId={chatId}
+              messages={messages}
+              isLoading={isLoading}
+              onBackClick={handleBackClick}
+              onSendMessage={handleSendMessage}
+              currentVote={currentVote}
+              setCurrentVote={setCurrentVote}
+              isChatOwner={isChatOwner}
+            />
+          )}
+        </main>
+        <ToastContainer theme={theme} />
+      </div>
+    </SidebarInset>
   );
 };
