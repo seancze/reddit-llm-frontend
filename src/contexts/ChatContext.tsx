@@ -83,7 +83,7 @@ export const ChatProvider: React.FC<{
         prevChats.filter((chat) => chat.chat_id !== chatIdToDelete)
       );
       // revalidate the path to ensure that if the user navigates to it, they will no longer see the deleted chat
-      await revalidatePathForChat(`/chat/${chatIdToDelete}`);
+      await revalidatePathForChat(chatIdToDelete);
       if (chatId === chatIdToDelete) {
         handleBackClick();
       }
