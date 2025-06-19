@@ -21,25 +21,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconDots, IconShare3, IconTrash } from "@tabler/icons-react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { IconDots, IconShare3, IconTrash } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSession } from "next-auth/react";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
 import { FaSpinner } from "react-icons/fa";
-import { ChatOverview } from "@/types/chatOverview";
+import { useTheme } from "next-themes";
 
 export const AppSidebar = () => {
   const { data: session } = useSession();
   const { isMobile } = useSidebar();
-  const { handleBackClick } = useChatContext();
+  const { theme } = useTheme();
+  const { chats, setChats, handleBackClick, deleteChat } = useChatContext();
   const menuItems = [
     {
       title: "New chat",
@@ -47,7 +54,7 @@ export const AppSidebar = () => {
       onClick: handleBackClick,
     },
   ];
-  const [chats, setChats] = useState<ChatOverview[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const getChats = async () => {
@@ -85,53 +92,53 @@ export const AppSidebar = () => {
   }, [session]);
 
   return (
-    <Sidebar>
-      {/* TODO: update colour scheme */}
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
-            <SidebarMenu className="pl-0!">
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title} className="list-none">
-                  <SidebarMenuButton asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      aria-label={item.title}
-                      size="icon"
-                      onClick={item.onClick}
-                    >
-                      <item.icon className="!size-5" />
-
-                      <span className="ml-2">{item.title}</span>
-                    </Button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Chats</SidebarGroupLabel>
-          {isLoading ? (
-            <div className="flex justify-center items-center my-4">
-              <FaSpinner className="animate-spin text-4xl" />
-            </div>
-          ) : (
+    <>
+      <Sidebar>
+        {/* TODO: update colour scheme */}
+        <SidebarContent>
+          <SidebarGroup>
             <SidebarGroupContent>
               {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
               <SidebarMenu className="pl-0!">
-                {chats.map((item) => (
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <SidebarMenuItem key={item.chat_id}>
-                        <SidebarMenuButton asChild>
-                          <a href={`/chat/${item.chat_id}`}>
-                            <span>{item.query}</span>
-                          </a>
-                        </SidebarMenuButton>
+                {menuItems.map((item) => (
+                  <SidebarMenuItem key={item.title} className="list-none">
+                    <SidebarMenuButton asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        aria-label={item.title}
+                        size="icon"
+                        onClick={item.onClick}
+                      >
+                        <item.icon className="!size-5" />
 
+                        <span className="ml-2">{item.title}</span>
+                      </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            {isLoading ? (
+              <div className="flex justify-center items-center my-4">
+                <FaSpinner className="animate-spin text-4xl" />
+              </div>
+            ) : (
+              <SidebarGroupContent>
+                {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
+                <SidebarMenu className="pl-0!">
+                  {chats.map((item) => (
+                    <SidebarMenuItem key={item.chat_id}>
+                      <SidebarMenuButton asChild>
+                        <a href={`/chat/${item.chat_id}`}>
+                          <span>{item.query}</span>
+                        </a>
+                      </SidebarMenuButton>
+                      {/* to use alertdialog with dropdown, see here: https://ui.shadcn.com/docs/components/dialog */}
+                      <AlertDialog>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <SidebarMenuAction
@@ -152,24 +159,51 @@ export const AppSidebar = () => {
                               <span>Share</span>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem variant="destructive">
-                              <IconTrash />
-                              <span>Delete</span>
-                            </DropdownMenuItem>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem variant="destructive">
+                                <IconTrash />
+                                <span>Delete</span>
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </SidebarMenuItem>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{item.query}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          )}
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Chat?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will delete:{" "}
+                              {
+                                <>
+                                  <p className="line-clamp-3 font-bold">
+                                    {item.query}
+                                  </p>
+                                  <br />
+                                </>
+                              }{" "}
+                              Note: This chat will remain stored on the server
+                              to investigate malicious requests.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-red-500 text-white hover:bg-red-600"
+                              onClick={() => deleteChat(item.chat_id)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            )}
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <ToastContainer theme={theme} />
+    </>
   );
 };

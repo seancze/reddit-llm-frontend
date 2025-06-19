@@ -6,12 +6,10 @@ import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { toastConfig } from "@/app/utils/constants";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
-import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { SidebarInset } from "@/components/ui/sidebar";
 
@@ -37,8 +35,6 @@ export const Home = ({
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
-  const router = useRouter();
-  const { theme } = useTheme();
 
   console.log({ session });
 
@@ -149,7 +145,6 @@ export const Home = ({
             />
           )}
         </main>
-        <ToastContainer theme={theme} />
       </div>
     </SidebarInset>
   );
