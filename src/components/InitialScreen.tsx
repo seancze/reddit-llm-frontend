@@ -3,14 +3,12 @@ import { ExampleQuestions } from "@/components/ExampleQuestions";
 import { ChatBox } from "@/components/ChatBox";
 
 interface InitialScreenProps {
-  onQuestionClick: (message: string) => void;
   onSendMessage: (message: string) => void;
   isLoading: boolean;
   isChatOwner: boolean;
 }
 
 export const InitialScreen: React.FC<InitialScreenProps> = ({
-  onQuestionClick,
   onSendMessage,
   isLoading,
   isChatOwner,
@@ -25,7 +23,7 @@ export const InitialScreen: React.FC<InitialScreenProps> = ({
         {/* only flush components to bottom on small screens */}
         <div className="fixed bottom-0 left-0 right-0 max-w-4xl px-4 sm:relative">
           <div className="my-4">
-            <ExampleQuestions onQuestionClick={onQuestionClick} />
+            <ExampleQuestions onSendMessage={onSendMessage} />
           </div>
           <ChatBox
             onSend={onSendMessage}

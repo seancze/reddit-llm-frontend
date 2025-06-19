@@ -63,8 +63,7 @@ export const Home = ({
     }
   }, [initialError]);
 
-  // TODO: refactor this function
-  const handleSendMessage = async (message: string, key?: string) => {
+  const handleSendMessage = async (message: string) => {
     setIsLoading(true);
     const messageWithQuestion: Message[] = [
       ...messages,
@@ -73,42 +72,27 @@ export const Home = ({
     setMessages(messageWithQuestion);
 
     try {
-      let data;
-      let response;
-      // if the user is not logged in, the user should only be able to get cached results
-      if (!session) {
-        response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${key}`,
-          {
-            method: "GET",
-          }
-        );
-        toast.warn(
-          "Hey, you are seeing a cached reply. Login to get a new reply!",
-          toastConfig
-        );
-      } else {
-        response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session?.jwt}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              query: messageWithQuestion,
-              username: session?.user?.name,
-              chat_id: chatId,
-            }),
-          }
-        );
-      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.jwt}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: messageWithQuestion,
+            username: session?.user?.name,
+            chat_id: chatId,
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(response.statusText);
       }
 
-      data = await response.json();
+      const data = await response.json();
       console.log({ data });
       if (!data || !data.response) {
         throw new Error("Invalid response from server");
@@ -152,7 +136,6 @@ export const Home = ({
       <main className="grow overflow-hidden">
         {messages.length === 0 ? (
           <InitialScreen
-            onQuestionClick={handleSendMessage}
             onSendMessage={handleSendMessage}
             isLoading={isLoading}
             isChatOwner={isChatOwner}

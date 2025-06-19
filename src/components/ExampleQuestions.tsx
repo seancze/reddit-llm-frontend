@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { questionsDict } from "@/app/utils/constants";
 import {
@@ -6,14 +8,29 @@ import {
   MarqueeFade,
   MarqueeItem,
 } from "@/components/ui/kibo-ui/marquee";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface ExampleQuestionsProps {
-  onQuestionClick: (question: string, key?: string) => void;
+  onSendMessage: (question: string, key?: string) => void;
 }
 
 export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
-  onQuestionClick,
+  onSendMessage,
 }) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const onQuestionClick = (question: string, key?: string) => {
+    if (session) {
+      onSendMessage(question);
+    } else {
+      router.replace(`/chat/${key}`);
+      sessionStorage.setItem(
+        "cachedReplyWarning",
+        "Hey, you are viewing a cached reply. Login to get a new reply!"
+      );
+    }
+  };
   return (
     <div className="flex size-full items-center justify-center bg-background">
       <Marquee>
