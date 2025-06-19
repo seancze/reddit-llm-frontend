@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { SquarePen } from "lucide-react";
-
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Sidebar,
   SidebarContent,
@@ -41,57 +41,79 @@ import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
 import { FaSpinner } from "react-icons/fa";
 import { useTheme } from "next-themes";
+import { ChatOverview } from "@/types/chatOverview";
 import Link from "next/link";
 
 export const AppSidebar = () => {
   const { data: session } = useSession();
-  const { isMobile } = useSidebar();
   const { theme } = useTheme();
+  const { isMobile } = useSidebar();
   const { chats, setChats, handleBackClick, shareChat, deleteChat } =
     useChatContext();
-  const menuItems = [
-    {
-      title: "New chat",
-      icon: SquarePen,
-      onClick: handleBackClick,
-    },
-  ];
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const getChats = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat`,
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["chats", session?.jwt],
+    queryFn: async ({ pageParam = 0 }) => {
+      console.log({ pageParam });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat?page=${pageParam}`,
         {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${session?.jwt}`,
-          },
+          headers: { Authorization: `Bearer ${session?.jwt}` },
         }
       );
-      if (!response.ok) {
-        throw new Error(response.statusText);
+      if (!res.ok) {
+        toast.error("Failed to fetch chats", toastConfig);
+        console.error("Failed to fetch chats:", res.statusText);
+        return [];
       }
-      const data = await response.json();
-      setChats(data);
-    } catch (error) {
-      console.log({ errorFetchingChats: error });
-      toast.error("Failed to fetch chats", toastConfig);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return (await res.json()) as ChatOverview[];
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      console.log({ lastPage, allPages });
+      // if you get back an empty array, there is no next page
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+
+      return allPages.length;
+    },
+    enabled: session ? true : false, // only run if session exists
+  });
+
   useEffect(() => {
-    if (session) {
-      getChats();
-    } else {
+    if (!session) {
       // if the user is not logged in, empty the chats
       // this prevents the user from seeing cached chats
       setChats([]);
+    } else if (status === "success" && data) {
+      // update chats after successfully fetching in infinite query
+      setChats(data.pages.flat());
     }
-  }, [session]);
+  }, [data, status, session, setChats]);
+
+  // used to detect when the user scrolls to the bottom of the sidebar
+  useEffect(() => {
+    if (!loaderRef.current || !hasNextPage) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "200px", threshold: 0.1 }
+    );
+    obs.observe(loaderRef.current);
+    return () => obs.disconnect();
+  }, [loaderRef.current, hasNextPage, fetchNextPage]);
 
   return (
     <>
@@ -102,31 +124,34 @@ export const AppSidebar = () => {
               <SidebarGroupContent>
                 {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
                 <SidebarMenu className="pl-0!">
-                  {menuItems.map((item) => (
-                    <SidebarMenuItem key={item.title} className="list-none">
-                      <SidebarMenuButton asChild>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                          aria-label={item.title}
-                          size="icon"
-                          onClick={item.onClick}
-                        >
-                          <item.icon className="!size-5" />
-
-                          <span className="ml-2">{item.title}</span>
-                        </Button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  <SidebarMenuItem className="list-none">
+                    <SidebarMenuButton asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        aria-label="New chat"
+                        size="icon"
+                        onClick={handleBackClick}
+                      >
+                        <SquarePen className="!size-5" />
+                        <span className="ml-2">New chat</span>
+                      </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+
             <SidebarGroup>
               <SidebarGroupLabel>Chats</SidebarGroupLabel>
-              {isLoading ? (
+              {status === "pending" ? (
                 <div className="flex justify-center items-center my-4">
                   <FaSpinner className="animate-spin text-4xl" />
+                </div>
+              ) : status === "error" ? (
+                <div className="p-4 text-red-600">
+                  Failed to load chats:{" "}
+                  {error instanceof Error && error.message}
                 </div>
               ) : (
                 <SidebarGroupContent>
@@ -176,14 +201,10 @@ export const AppSidebar = () => {
                               <AlertDialogTitle>Delete Chat?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 This will delete:{" "}
-                                {
-                                  <>
-                                    <p className="line-clamp-3 font-bold">
-                                      {item.query}
-                                    </p>
-                                    <br />
-                                  </>
-                                }{" "}
+                                <p className="line-clamp-3 font-bold">
+                                  {item.query}
+                                </p>
+                                <br />
                                 Note: This chat will remain stored on the server
                                 to investigate malicious requests.
                               </AlertDialogDescription>
@@ -202,6 +223,13 @@ export const AppSidebar = () => {
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>
+
+                  {isFetchingNextPage && (
+                    <div className="flex justify-center my-4">
+                      <FaSpinner className="animate-spin text-4xl" />
+                    </div>
+                  )}
+                  <div ref={loaderRef} />
                 </SidebarGroupContent>
               )}
             </SidebarGroup>
