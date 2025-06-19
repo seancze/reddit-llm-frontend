@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa";
 import { FeedbackButtons } from "@/components/FeedbackButtons";
 import { Message } from "@/types/message";
@@ -7,6 +8,8 @@ import remarkGfm from "remark-gfm";
 import { useSession } from "next-auth/react";
 import { ChatBox } from "@/components/ChatBox";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
+import { toastConfig } from "@/app/utils/constants";
 
 interface ChatInterfaceProps {
   queryId: string;
@@ -50,6 +53,21 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const formatMessageContent = (content: string) => {
     return content.replace(/\*\*Similar posts\*\*/g, "\\\n**Similar posts**");
   };
+
+  // used to show a warning when the user is not logged in and viewing a cached reply
+  // this is set in the ExampleQuestions component when the user clicks on a question
+  // and is redirected to the chat page without logging in
+  useEffect(() => {
+    const cachedReplyWarning = sessionStorage.getItem("cachedReplyWarning");
+    console.log({ cachedReplyWarning });
+    if (!cachedReplyWarning) return;
+
+    if (!session) {
+      console.log("[INFO] Showing cached reply warning");
+      toast.warn(cachedReplyWarning, toastConfig);
+    }
+    sessionStorage.removeItem("cachedReplyWarning");
+  }, []);
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4">
