@@ -41,6 +41,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "@/app/utils/constants";
 import { FaSpinner } from "react-icons/fa";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 export const AppSidebar = () => {
   const { data: session } = useSession();
@@ -134,9 +135,9 @@ export const AppSidebar = () => {
                     {chats.map((item) => (
                       <SidebarMenuItem key={item.chat_id}>
                         <SidebarMenuButton asChild>
-                          <a href={`/chat/${item.chat_id}`}>
+                          <Link href={`/chat/${item.chat_id}`}>
                             <span>{item.query}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                         {/* to use alertdialog with dropdown, see here: https://ui.shadcn.com/docs/components/dialog */}
                         <AlertDialog>
