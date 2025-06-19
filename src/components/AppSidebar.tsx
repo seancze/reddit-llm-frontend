@@ -94,7 +94,6 @@ export const AppSidebar = () => {
   return (
     <>
       <Sidebar>
-        {/* TODO: update colour scheme */}
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>

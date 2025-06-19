@@ -74,7 +74,10 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
               <AIInputTools />
               {/* // NOTE: we do not disable the button if the input is invalid (i.e. !isValid || !dirty)
                 // this is done so that the user can still submit the form which will trigger the display of the error message */}
-              <AIInputSubmit disabled={isDisabled}>
+              <AIInputSubmit
+                disabled={isDisabled}
+                className="text-secondary-foreground"
+              >
                 <SendIcon size={16} />
               </AIInputSubmit>
             </AIInputToolbar>

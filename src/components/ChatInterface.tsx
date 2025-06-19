@@ -76,7 +76,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <div className="w-full py-6 px-2">
           <Button
             onClick={onBackClick}
-            className={`mb-4 rounded-full text-primary-foreground bg-primary`}
+            className={`mb-4 rounded-full text-secondary-foreground`}
             aria-label="Back to start"
             disabled={isLoading}
             size={"icon"}
@@ -89,7 +89,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 key={index}
                 className={`p-4 rounded-lg shadow-md ${
                   message.role === "user"
-                    ? "text-primary-foreground bg-primary"
+                    ? "bg-primary"
                     : "border text-secondary-foreground bg-secondary"
                 }`}
               >
