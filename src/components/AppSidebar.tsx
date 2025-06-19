@@ -94,117 +94,119 @@ export const AppSidebar = () => {
 
   return (
     <>
-      <Sidebar>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
-              <SidebarMenu className="pl-0!">
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.title} className="list-none">
-                    <SidebarMenuButton asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        aria-label={item.title}
-                        size="icon"
-                        onClick={item.onClick}
-                      >
-                        <item.icon className="!size-5" />
-
-                        <span className="ml-2">{item.title}</span>
-                      </Button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Chats</SidebarGroupLabel>
-            {isLoading ? (
-              <div className="flex justify-center items-center my-4">
-                <FaSpinner className="animate-spin text-4xl" />
-              </div>
-            ) : (
+      {session && (
+        <Sidebar>
+          <SidebarContent>
+            <SidebarGroup>
               <SidebarGroupContent>
                 {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
                 <SidebarMenu className="pl-0!">
-                  {chats.map((item) => (
-                    <SidebarMenuItem key={item.chat_id}>
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.title} className="list-none">
                       <SidebarMenuButton asChild>
-                        <a href={`/chat/${item.chat_id}`}>
-                          <span>{item.query}</span>
-                        </a>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          aria-label={item.title}
+                          size="icon"
+                          onClick={item.onClick}
+                        >
+                          <item.icon className="!size-5" />
+
+                          <span className="ml-2">{item.title}</span>
+                        </Button>
                       </SidebarMenuButton>
-                      {/* to use alertdialog with dropdown, see here: https://ui.shadcn.com/docs/components/dialog */}
-                      <AlertDialog>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <SidebarMenuAction
-                              showOnHover
-                              className="data-[state=open]:bg-accent rounded-sm"
-                            >
-                              <IconDots />
-                              <span className="sr-only">More</span>
-                            </SidebarMenuAction>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            className="w-24 rounded-lg"
-                            side={isMobile ? "bottom" : "right"}
-                            align={isMobile ? "end" : "start"}
-                          >
-                            <DropdownMenuItem
-                              onClick={() => shareChat(item.chat_id)}
-                            >
-                              <IconShare3 />
-                              <span>Share</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem variant="destructive">
-                                <IconTrash />
-                                <span>Delete</span>
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Chat?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will delete:{" "}
-                              {
-                                <>
-                                  <p className="line-clamp-3 font-bold">
-                                    {item.query}
-                                  </p>
-                                  <br />
-                                </>
-                              }{" "}
-                              Note: This chat will remain stored on the server
-                              to investigate malicious requests.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-red-500 text-white hover:bg-red-600"
-                              onClick={() => deleteChat(item.chat_id)}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
-            )}
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
+            </SidebarGroup>
+            <SidebarGroup>
+              <SidebarGroupLabel>Chats</SidebarGroupLabel>
+              {isLoading ? (
+                <div className="flex justify-center items-center my-4">
+                  <FaSpinner className="animate-spin text-4xl" />
+                </div>
+              ) : (
+                <SidebarGroupContent>
+                  {/* workaround: these css stylings are used to remove the styles applied in globals.css */}
+                  <SidebarMenu className="pl-0!">
+                    {chats.map((item) => (
+                      <SidebarMenuItem key={item.chat_id}>
+                        <SidebarMenuButton asChild>
+                          <a href={`/chat/${item.chat_id}`}>
+                            <span>{item.query}</span>
+                          </a>
+                        </SidebarMenuButton>
+                        {/* to use alertdialog with dropdown, see here: https://ui.shadcn.com/docs/components/dialog */}
+                        <AlertDialog>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <SidebarMenuAction
+                                showOnHover
+                                className="data-[state=open]:bg-accent rounded-sm"
+                              >
+                                <IconDots />
+                                <span className="sr-only">More</span>
+                              </SidebarMenuAction>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              className="w-24 rounded-lg"
+                              side={isMobile ? "bottom" : "right"}
+                              align={isMobile ? "end" : "start"}
+                            >
+                              <DropdownMenuItem
+                                onClick={() => shareChat(item.chat_id)}
+                              >
+                                <IconShare3 />
+                                <span>Share</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem variant="destructive">
+                                  <IconTrash />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Chat?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will delete:{" "}
+                                {
+                                  <>
+                                    <p className="line-clamp-3 font-bold">
+                                      {item.query}
+                                    </p>
+                                    <br />
+                                  </>
+                                }{" "}
+                                Note: This chat will remain stored on the server
+                                to investigate malicious requests.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-red-500 text-white hover:bg-red-600"
+                                onClick={() => deleteChat(item.chat_id)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              )}
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      )}
       <ToastContainer theme={theme} />
     </>
   );
