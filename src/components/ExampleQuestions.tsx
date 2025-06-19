@@ -24,7 +24,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
     if (session) {
       onSendMessage(question);
     } else {
-      router.replace(`/chat/${key}`);
+      router.push(`/chat/${key}`);
       sessionStorage.setItem(
         "cachedReplyWarning",
         "Hey, you are viewing a cached reply. Login to get a new reply!"

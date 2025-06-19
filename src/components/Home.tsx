@@ -47,6 +47,13 @@ export const Home = ({
       setChatId(initialChatData.chatId);
       setIsChatOwner(initialChatData.isChatOwner);
       setCurrentVote(initialChatData.vote);
+    } else {
+      // reset state to default values
+      setMessages([]);
+      setQueryId("");
+      setChatId("");
+      setIsChatOwner(true);
+      setCurrentVote(0);
     }
   }, [
     initialChatData,
