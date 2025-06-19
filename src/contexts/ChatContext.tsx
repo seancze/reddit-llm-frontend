@@ -25,6 +25,7 @@ interface ChatContextType {
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
   handleBackClick: () => void;
+  shareChat: (chatId: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
 }
 
@@ -49,6 +50,17 @@ export const ChatProvider: React.FC<{
     setChatId("");
     setIsChatOwner(true);
     router.push("/");
+  };
+
+  const shareChat = async (chatIdToShare: string) => {
+    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}chat/${chatIdToShare}`;
+    console.log({ shareUrl });
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Copied to clipboard!", toastConfig);
+    } catch (err) {
+      toast.error("Failed to copy", toastConfig);
+    }
   };
 
   const deleteChat = async (chatIdToDelete: string) => {
@@ -81,6 +93,7 @@ export const ChatProvider: React.FC<{
       toast.error("Failed to delete chat", toastConfig);
     }
   };
+
   return (
     <ChatContext.Provider
       value={{
@@ -99,6 +112,7 @@ export const ChatProvider: React.FC<{
         currentVote,
         setCurrentVote,
         handleBackClick,
+        shareChat,
         deleteChat,
       }}
     >

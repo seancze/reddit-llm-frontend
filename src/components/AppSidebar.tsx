@@ -46,7 +46,8 @@ export const AppSidebar = () => {
   const { data: session } = useSession();
   const { isMobile } = useSidebar();
   const { theme } = useTheme();
-  const { chats, setChats, handleBackClick, deleteChat } = useChatContext();
+  const { chats, setChats, handleBackClick, shareChat, deleteChat } =
+    useChatContext();
   const menuItems = [
     {
       title: "New chat",
@@ -153,7 +154,9 @@ export const AppSidebar = () => {
                             side={isMobile ? "bottom" : "right"}
                             align={isMobile ? "end" : "start"}
                           >
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => shareChat(item.chat_id)}
+                            >
                               <IconShare3 />
                               <span>Share</span>
                             </DropdownMenuItem>

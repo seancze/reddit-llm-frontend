@@ -4,8 +4,7 @@ import { useEffect, useCallback, useRef } from "react";
 import { debounce } from "lodash";
 import { useSession } from "next-auth/react";
 import { FaShare, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
-import { toast } from "react-toastify";
-import { toastConfig } from "@/app/utils/constants";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface FeedbackButtonsProps {
   queryId: string;
@@ -27,6 +26,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
 }) => {
   const { data: session } = useSession();
   const debouncedVoteRef = useRef<DebouncedFunction | null>(null);
+  const { shareChat } = useChatContext();
 
   const handleVote = useCallback(
     (vote: -1 | 1) => {
@@ -39,17 +39,6 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
     },
     [queryId, session?.user?.name, currentVote, setCurrentVote]
   );
-
-  const handleShare = async () => {
-    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}chat/${chatId}`;
-    console.log({ shareUrl });
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Copied to clipboard!", toastConfig);
-    } catch (err) {
-      toast.error("Failed to copy", toastConfig);
-    }
-  };
 
   useEffect(() => {
     debouncedVoteRef.current = debounce(
@@ -115,7 +104,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
 
         <div className="relative">
           <button
-            onClick={handleShare}
+            onClick={() => shareChat(chatId)}
             className="flex items-center justify-center px-4 py-3 rounded-full font-medium transition-all duration-200 ease-in-out shadow-md border
               hover:bg-cyan-600 hover:text-white bg-secondary text-cyan-400 hover:scale-105"
           >
