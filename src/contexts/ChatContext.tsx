@@ -45,10 +45,6 @@ export const ChatProvider: React.FC<{
 
   const router = useRouter();
   const handleBackClick = () => {
-    setMessages([]);
-    setQueryId("");
-    setChatId("");
-    setIsChatOwner(true);
     router.push("/");
   };
 
