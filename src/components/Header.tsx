@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ onBackClick }) => {
           variant={"ghost"}
           onClick={onBackClick}
           // pl-0 and hover:bg-transparent is used to remove default styling that comes with the Button component
-          className="text-base font-medium cursor-pointer pl-0 hover:bg-transparent"
+          className="text-base font-medium cursor-pointer pl-0 hover:bg-transparent!"
         >
           ChatGPT For SGExams
         </Button>
