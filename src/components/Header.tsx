@@ -31,42 +31,42 @@ export const Header: React.FC<HeaderProps> = ({ onBackClick }) => {
           variant={"ghost"}
           onClick={onBackClick}
           // pl-0 and hover:bg-transparent is used to remove default styling that comes with the Button component
-          className="text-base font-medium cursor-pointer pl-0 hover:bg-transparent!"
+          className="text-xs md:text-base font-medium cursor-pointer pl-0 hover:bg-transparent!"
         >
           ChatGPT For SGExams
         </Button>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center">
           {session ? (
             <Button
               onClick={() => signOut()}
-              className="bg-reddit-orange text-white hover:bg-reddit-orange-dark font-bold py-2 px-4 rounded shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center"
+              className="bg-reddit-orange text-white hover:bg-reddit-orange-dark font-bold rounded shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center"
             >
               <Image
                 src="/reddit.svg"
                 alt="Reddit logo"
                 width={20}
                 height={20}
-                className="mr-2 inline-block"
+                className="inline-block"
               />
               Logout
             </Button>
           ) : (
             <Button
               onClick={() => signIn("reddit")}
-              className="bg-reddit-orange text-white hover:bg-reddit-orange-dark font-bold py-2 px-4 rounded shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center"
+              className="bg-reddit-orange text-white hover:bg-reddit-orange-dark font-bold rounded shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center"
             >
               <Image
                 src="/reddit.svg"
                 alt="Reddit logo"
                 width={20}
                 height={20}
-                className="mr-2 inline-block"
+                className="inline-block"
               />
               Login with Reddit
             </Button>
           )}
-          <div className="ml-4">
+          <div className="ml-2 md:ml-4">
             <ModeToggle />
           </div>
         </div>
