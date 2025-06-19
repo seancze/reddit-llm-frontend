@@ -201,7 +201,7 @@ export const AppSidebar = () => {
                               <AlertDialogTitle>Delete Chat?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 This will delete:{" "}
-                                <p className="line-clamp-3 font-bold">
+                                <p className="line-clamp-3 font-bold text-secondary-foreground">
                                   {item.query}
                                 </p>
                                 <br />
