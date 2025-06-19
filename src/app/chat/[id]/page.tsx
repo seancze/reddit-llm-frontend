@@ -17,11 +17,14 @@ const getChatData = async (pageId: string): Promise<ChatData> => {
       next: { revalidate: 86400 }, // 24 hours
     }
   );
-  if (!res.ok) {
-    if (res.status === 404) throw new Error("Error: Query not found");
-    throw new Error(res.statusText);
-  }
   const data = await res.json();
+  if (!res.ok) {
+    if (data.detail) {
+      throw new Error(data.detail);
+    } else {
+      throw new Error(res.statusText);
+    }
+  }
   if (!data?.response) throw new Error("Invalid response from server");
   for (const msg of data.response) {
     if (msg.role === "user") {

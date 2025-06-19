@@ -41,7 +41,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
             return (
               <MarqueeItem
                 key={key}
-                className="h-24 w-40 text-xs hover:cursor-pointer border-0 rounded-lg flex items-center justify-center px-2 text-primary-foreground bg-primary hover:bg-primary/90"
+                className="h-24 w-40 text-xs hover:cursor-pointer border-0 rounded-lg flex items-center justify-center px-2 bg-primary hover:bg-primary/90"
                 onClick={() => onQuestionClick(question, key)}
               >
                 {question}

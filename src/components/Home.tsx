@@ -6,13 +6,12 @@ import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { toastConfig } from "@/app/utils/constants";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 
 export const Home = ({
   initialChatData,
@@ -30,13 +29,14 @@ export const Home = ({
     setChatId,
     isChatOwner,
     setIsChatOwner,
+    setChats,
     currentVote,
     setCurrentVote,
+    handleBackClick,
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
-  const { theme } = useTheme();
 
   console.log({ session });
 
@@ -100,6 +100,21 @@ export const Home = ({
 
       const lastIndex = data.response.length - 1;
 
+      const isFirstMessage = messages.length === 0;
+      if (isFirstMessage) {
+        router.push(`/chat/${data.chat_id}`);
+        const timeNowUtcSeconds = Math.floor(Date.now() / 1000);
+        // inserts the new chat at the top of our chat list
+        setChats((prevChats) => [
+          {
+            chat_id: data.chat_id,
+            query: message,
+            created_utc: timeNowUtcSeconds,
+          },
+          ...prevChats,
+        ]);
+      }
+
       setMessages([...messageWithQuestion, data.response[lastIndex]]);
       setQueryId(data.query_id);
       setChatId(data.chat_id);
@@ -122,39 +137,32 @@ export const Home = ({
     }
   };
 
-  const handleBackClick = () => {
-    setMessages([]);
-    setQueryId("");
-    setChatId("");
-    setIsChatOwner(true);
-    router.push("/");
-  };
-
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
-      <Header onBackClick={handleBackClick} />
-      <main className="grow overflow-hidden">
-        {messages.length === 0 ? (
-          <InitialScreen
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            isChatOwner={isChatOwner}
-          />
-        ) : (
-          <ChatInterface
-            queryId={queryId}
-            chatId={chatId}
-            messages={messages}
-            isLoading={isLoading}
-            onBackClick={handleBackClick}
-            onSendMessage={handleSendMessage}
-            currentVote={currentVote}
-            setCurrentVote={setCurrentVote}
-            isChatOwner={isChatOwner}
-          />
-        )}
-      </main>
-      <ToastContainer theme={theme} />
-    </div>
+    <SidebarInset>
+      <div className="flex flex-col bg-background text-foreground">
+        <Header onBackClick={handleBackClick} />
+        <main className="grow overflow-hidden">
+          {messages.length === 0 ? (
+            <InitialScreen
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading}
+              isChatOwner={isChatOwner}
+            />
+          ) : (
+            <ChatInterface
+              queryId={queryId}
+              chatId={chatId}
+              messages={messages}
+              isLoading={isLoading}
+              onBackClick={handleBackClick}
+              onSendMessage={handleSendMessage}
+              currentVote={currentVote}
+              setCurrentVote={setCurrentVote}
+              isChatOwner={isChatOwner}
+            />
+          )}
+        </main>
+      </div>
+    </SidebarInset>
   );
 };
