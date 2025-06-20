@@ -4,6 +4,7 @@ import { SquarePen } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -32,7 +33,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { IconDots, IconShare3, IconTrash } from "@tabler/icons-react";
+import {
+  IconDots,
+  IconShare3,
+  IconTrash,
+  IconChartBar,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useSession } from "next-auth/react";
@@ -119,6 +125,14 @@ export const AppSidebar = () => {
     <>
       {session && (
         <Sidebar>
+          {/* remove the padding to ensure that the height is equal to --header-height */}
+          <SidebarHeader className="p-0">
+            <SidebarMenu>
+              <SidebarMenuItem className="list-none">
+                <div className="h-(--header-height)" aria-hidden="true" />
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupContent>
@@ -136,6 +150,25 @@ export const AppSidebar = () => {
                         <SquarePen className="!size-5" />
                         <span className="ml-2">New chat</span>
                       </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem className="list-none">
+                    <SidebarMenuButton asChild>
+                      <a
+                        href="https://charts.mongodb.com/charts-step-iiyjphy/public/dashboards/f6b40c75-f77d-4a6d-83b1-a97b3683aebc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          aria-label="Analytics"
+                          size="icon"
+                        >
+                          <IconChartBar className="!size-5" />
+                          <span className="ml-2">Analytics</span>
+                        </Button>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
