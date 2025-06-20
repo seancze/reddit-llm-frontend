@@ -129,7 +129,8 @@ export const Home = ({
         setChats((prevChats) => [
           {
             chat_id: data.chat_id,
-            query: message,
+            // set to lowercase for consistency with results returned by the backend
+            query: message.toLowerCase(),
             created_utc: timeNowUtcSeconds,
           },
           ...prevChats,
