@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
@@ -37,8 +37,16 @@ export const Home = ({
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const abortRef = useRef<AbortController | null>(null);
 
   console.log({ session });
+
+  useEffect(() => {
+    return () => {
+      // abort any ongoing fetch request when component unmounts (eg: navigating to different page)
+      abortRef.current?.abort();
+    };
+  }, []);
 
   useEffect(() => {
     if (initialChatData) {
@@ -71,6 +79,12 @@ export const Home = ({
   }, [initialError]);
 
   const handleSendMessage = async (message: string) => {
+    // abort any prior fetch
+    abortRef.current?.abort();
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsLoading(true);
     const messageWithQuestion: Message[] = [
       ...messages,
@@ -79,7 +93,7 @@ export const Home = ({
     setMessages(messageWithQuestion);
 
     try {
-      const response = await fetch(
+      const resp = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
         {
           method: "POST",
@@ -92,21 +106,21 @@ export const Home = ({
             username: session?.user?.name,
             chat_id: chatId,
           }),
+          // pass the abort signal (if any) to the fetch request
+          signal: controller.signal,
         }
       );
 
-      if (!response.ok) {
-        throw new Error(response.statusText);
+      if (!resp.ok) {
+        throw new Error(resp.statusText);
       }
 
-      const data = await response.json();
-      console.log({ data });
-      if (!data || !data.response) {
+      const data = await resp.json();
+      if (!data?.response) {
         throw new Error("Invalid response from server");
       }
 
       const lastIndex = data.response.length - 1;
-
       const isFirstMessage = messages.length === 0;
       if (isFirstMessage) {
         router.push(`/chat/${data.chat_id}`);
@@ -127,20 +141,21 @@ export const Home = ({
       setChatId(data.chat_id);
       setCurrentVote(data.user_vote);
       setIsChatOwner(true);
-    } catch (error) {
-      console.log({ errorFetchingResponse: error });
-      let errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      if (errorMessage === "Unauthorized") {
-        if (session) {
-          errorMessage = "Your session has expired. Please login again";
-        } else {
-          errorMessage = "Unauthorised: Please login to continue";
-        }
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.log("Request was cancelled");
+        return;
       }
-      toast.error(errorMessage, toastConfig);
+      let msg = err.message ?? "An unexpected error occurred";
+      if (msg === "Unauthorized") {
+        msg = session
+          ? "Your session has expired. Please login again"
+          : "Unauthorised: Please login to continue";
+      }
+      toast.error(msg, toastConfig);
     } finally {
       setIsLoading(false);
+      abortRef.current = null;
     }
   };
 
