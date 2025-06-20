@@ -66,7 +66,7 @@ export const AppSidebar = () => {
     status,
     error,
   } = useInfiniteQuery({
-    queryKey: ["chats", session?.jwt],
+    queryKey: ["chats"],
     queryFn: async ({ pageParam = 0 }) => {
       console.log({ pageParam });
       const res = await fetch(
