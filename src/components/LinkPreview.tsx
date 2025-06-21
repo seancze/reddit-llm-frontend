@@ -80,8 +80,8 @@ export function LinkPreview({ href, className, children }: LinkPreviewProps) {
         )}
 
         {/* finished loading but data is not available */}
-        {!loading && !meta && hasFetched && (
-          <div className="p-4 text-sm text-gray-600">Preview not available</div>
+        {!loading && !meta?.metadata && hasFetched && (
+          <GlimpseDescription>Preview not available</GlimpseDescription>
         )}
       </GlimpseContent>
     </Glimpse>
