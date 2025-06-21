@@ -10,6 +10,7 @@ import { ChatBox } from "@/components/ChatBox";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { toastConfig } from "@/app/utils/constants";
+import { LinkPreview } from "@/components/LinkPreview";
 
 interface ChatInterfaceProps {
   queryId: string;
@@ -36,23 +37,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 }) => {
   const { data: session } = useSession();
 
-  const urlTransform = (href: string) => href;
-
-  // used to customise style of hyperlinks in markdown
+  // override what is shown when a link is found in markdown
   const components = {
-    a: ({ ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        className="dark:text-cyan-500 dark:hover:text-cyan-400 text-[#1b76cf] hover:text-[#135391] underline"
-        {...props}
-      />
-    ),
+    a: ({
+      href,
+      children,
+      ...props
+    }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+      if (href) {
+        return (
+          <LinkPreview
+            href={href}
+            className="dark:text-cyan-500 dark:hover:text-cyan-400 text-[#1b76cf] hover:text-[#135391] underline"
+          >
+            {children}
+          </LinkPreview>
+        );
+      }
+      return <a {...props}>{children}</a>;
+    },
   };
 
-  const formatMessageContent = (content: string) => {
-    return content.replace(/\*\*Similar posts\*\*/g, "\\\n**Similar posts**");
-  };
+  const formatMessageContent = (content: string) =>
+    content.replace(/\*\*Similar posts\*\*/g, "\\\n**Similar posts**");
 
   // used to show a warning when the user is not logged in and viewing a cached reply
   // this is set in the ExampleQuestions component when the user clicks on a question
@@ -67,52 +74,50 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       toast.warn(cachedReplyWarning, toastConfig);
     }
     sessionStorage.removeItem("cachedReplyWarning");
-  }, []);
+  }, [session]);
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4">
       <div className="grow overflow-y-auto pb-4">
-        {/* px-2 ensures that thumbs up button does not go out of bounds when hovered */}
         <div className="w-full py-6 px-2">
           <Button
             onClick={onBackClick}
-            className={`mb-4 rounded-full text-secondary-foreground`}
+            className="mb-4 rounded-full text-secondary-foreground"
             aria-label="Back to start"
             disabled={isLoading}
-            size={"icon"}
+            size="icon"
           >
             <FaArrowLeft />
           </Button>
+
           <div className="space-y-4">
-            {messages.map((message, index) => (
+            {messages.map((message, i) => (
               <div
-                key={index}
+                key={i}
                 className={`p-4 rounded-lg shadow-md ${
                   message.role === "user"
                     ? "bg-primary"
                     : "border text-secondary-foreground bg-secondary"
                 }`}
               >
-                <>
-                  <Markdown
-                    className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline overflow-auto"
-                    remarkPlugins={[remarkGfm]}
-                    urlTransform={urlTransform}
-                    components={components}
-                  >
-                    {formatMessageContent(message.content)}
-                  </Markdown>
-                </>
+                <Markdown
+                  className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline overflow-auto"
+                  remarkPlugins={[remarkGfm]}
+                  components={components}
+                >
+                  {formatMessageContent(message.content)}
+                </Markdown>
               </div>
             ))}
           </div>
+
           {isLoading && (
             <div className="flex justify-center items-center my-4">
               <FaSpinner className="animate-spin text-4xl" />
             </div>
           )}
           {/* only show feedback button when response from AI is generated; this happens when messages.length is even */}
-          {!isLoading && session && messages.length % 2 == 0 && (
+          {!isLoading && session && messages.length % 2 === 0 && (
             <FeedbackButtons
               queryId={queryId}
               chatId={chatId}
@@ -122,13 +127,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
       </div>
-      <div>
-        <ChatBox
-          onSend={onSendMessage}
-          isLoading={isLoading}
-          isChatOwner={isChatOwner}
-        />
-      </div>
+
+      <ChatBox
+        onSend={onSendMessage}
+        isLoading={isLoading}
+        isChatOwner={isChatOwner}
+      />
     </div>
   );
 };
