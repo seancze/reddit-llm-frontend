@@ -95,7 +95,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               >
                 <>
                   <Markdown
-                    className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline"
+                    className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline overflow-auto"
                     remarkPlugins={[remarkGfm]}
                     urlTransform={urlTransform}
                     components={components}
