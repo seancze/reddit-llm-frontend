@@ -162,7 +162,7 @@ export const Home = ({
 
   return (
     <SidebarInset>
-      <div className="flex flex-col bg-background text-foreground">
+      <div className="flex flex-col bg-background text-foreground max-h-screen">
         <Header onBackClick={handleBackClick} />
         <main className="grow overflow-hidden">
           {messages.length === 0 ? (
