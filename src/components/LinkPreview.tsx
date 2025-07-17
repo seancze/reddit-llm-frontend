@@ -69,7 +69,10 @@ export function LinkPreview({ href, className, children }: LinkPreviewProps) {
             {meta.image && <GlimpseImage src={meta.image} alt={meta.title} />}
             {meta.title && <GlimpseTitle>{meta.title}</GlimpseTitle>}
             {meta.body && (
-              <GlimpseDescription className="line-clamp-5 overflow-auto">
+              <GlimpseDescription
+                className="overflow-y-scroll"
+                style={{ maxHeight: "7.5rem" }}
+              >
                 {meta.body}
               </GlimpseDescription>
             )}
