@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { Message } from "@/types/message";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ChatOverview } from "@/types/chatOverview";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -24,6 +24,7 @@ interface ChatContextType {
   setIsChatOwner: React.Dispatch<React.SetStateAction<boolean>>;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
+  resetChatState: () => void;
   handleBackClick: () => void;
   shareChat: (chatId: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
@@ -44,8 +45,27 @@ export const ChatProvider: React.FC<{
   const { data: session } = useSession();
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  // useCallback ensures that the function is not recreated on every render of the ChatProvider component
+  // if it was recreated on every render, it would trigger an infinite loop in the useEffect hook in Home.tsx
+  const resetChatState = useCallback(() => {
+    setMessages([]);
+    setQueryId("");
+    setChatId("");
+    setIsChatOwner(true);
+    setCurrentVote(0);
+  }, []);
+
   const handleBackClick = () => {
-    router.push("/");
+    if (pathname === "/") {
+      // if the user is already on the home page, explicitly reset the chat state
+      // this is needed because when a cached reply is clicked, the pathname does not change
+      resetChatState();
+    } else {
+      // otherwise, rely on the home page to reset chat state
+      router.push("/");
+    }
   };
 
   const shareChat = async (chatIdToShare: string) => {
@@ -107,6 +127,7 @@ export const ChatProvider: React.FC<{
         setIsChatOwner,
         currentVote,
         setCurrentVote,
+        resetChatState,
         handleBackClick,
         shareChat,
         deleteChat,

@@ -16,9 +16,11 @@ import { useRouter } from "next/navigation";
 export const Home = ({
   initialChatData,
   initialError,
+  preloadedChatData,
 }: {
   initialChatData?: ChatData;
   initialError?: string;
+  preloadedChatData?: Record<string, ChatData>;
 }) => {
   const {
     messages,
@@ -32,9 +34,13 @@ export const Home = ({
     setChats,
     currentVote,
     setCurrentVote,
+    resetChatState,
     handleBackClick,
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [chatData, setChatData] = useState<ChatData | undefined>(
+    initialChatData
+  );
   const { data: session } = useSession();
   const router = useRouter();
   const abortRef = useRef<AbortController | null>(null);
@@ -49,27 +55,33 @@ export const Home = ({
   }, []);
 
   useEffect(() => {
-    if (initialChatData) {
-      setMessages(initialChatData.messages);
-      setQueryId(initialChatData.lastQueryId);
-      setChatId(initialChatData.chatId);
-      setIsChatOwner(initialChatData.isChatOwner);
-      setCurrentVote(initialChatData.vote);
+    // If a chat ID is selected, and we have preloaded data for it, use that instead
+    if (chatId && preloadedChatData?.[chatId]) {
+      setChatData(preloadedChatData[chatId]);
+    } else {
+      setChatData(initialChatData);
+    }
+  }, [chatId, preloadedChatData, initialChatData]);
+
+  useEffect(() => {
+    if (chatData) {
+      setMessages(chatData.messages);
+      setQueryId(chatData.lastQueryId);
+      setChatId(chatData.chatId);
+      setIsChatOwner(chatData.isChatOwner);
+      setCurrentVote(chatData.vote);
     } else {
       // reset state to default values
-      setMessages([]);
-      setQueryId("");
-      setChatId("");
-      setIsChatOwner(true);
-      setCurrentVote(0);
+      resetChatState();
     }
   }, [
-    initialChatData,
+    chatData,
     setMessages,
     setQueryId,
     setChatId,
     setIsChatOwner,
     setCurrentVote,
+    resetChatState,
   ]);
 
   useEffect(() => {

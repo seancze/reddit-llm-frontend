@@ -9,7 +9,7 @@ import {
   MarqueeItem,
 } from "@/components/ui/kibo-ui/marquee";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface ExampleQuestionsProps {
   onSendMessage: (question: string, key?: string) => void;
@@ -19,16 +19,17 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
   onSendMessage,
 }) => {
   const { data: session } = useSession();
-  const router = useRouter();
-  const onQuestionClick = (question: string, key?: string) => {
+  const { setChatId } = useChatContext();
+
+  const onQuestionClick = (question: string, key: string) => {
     if (session) {
       onSendMessage(question);
     } else {
-      router.push(`/chat/${key}`);
       sessionStorage.setItem(
         "cachedReplyWarning",
         "Hey, you are viewing a cached reply. Login to get a new reply!"
       );
+      setChatId(key);
     }
   };
   return (
