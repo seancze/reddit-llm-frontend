@@ -135,7 +135,6 @@ export const Home = ({
       const lastIndex = data.response.length - 1;
       const isFirstMessage = messages.length === 0;
       if (isFirstMessage) {
-        router.push(`/chat/${data.chat_id}`);
         const timeNowUtcSeconds = Math.floor(Date.now() / 1000);
         // inserts the new chat at the top of our chat list
         setChats((prevChats) => [

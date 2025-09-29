@@ -60,10 +60,11 @@ export const ChatProvider: React.FC<{
   const handleBackClick = () => {
     if (pathname === "/") {
       // if the user is already on the home page, explicitly reset the chat state
-      // this is needed because when a cached reply is clicked, the pathname does not change
+      // used when user clicks back from a cached chat (i.e. one of the example questions) or a new chat
       resetChatState();
     } else {
       // otherwise, rely on the home page to reset chat state
+      // used when user clicks back from an existing chat
       router.push("/");
     }
   };
