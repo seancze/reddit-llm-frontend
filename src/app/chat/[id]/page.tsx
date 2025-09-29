@@ -6,6 +6,7 @@ import { questionsDict } from "@/app/utils/constants";
 
 const getChatData = async (pageId: string): Promise<ChatData> => {
   const session = await auth();
+  const isInQuestionsDict = pageId in questionsDict;
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${pageId}`,
     {
@@ -14,7 +15,7 @@ const getChatData = async (pageId: string): Promise<ChatData> => {
         Authorization: `Bearer ${session?.jwt}`,
         "Content-Type": "application/json",
       },
-      next: { revalidate: 86400 }, // 24 hours
+      next: { revalidate: isInQuestionsDict ? false : 86400 }, // Cache forever if in questionsDict, otherwise 24 hours
     }
   );
   const data = await res.json();
