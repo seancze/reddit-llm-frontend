@@ -7,7 +7,7 @@ export const getChatData = async (pageId: string): Promise<ChatData> => {
   const session = await auth();
   const isInQuestionsDict = pageId in questionsDict;
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat/${pageId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}chat/${pageId}`,
     {
       method: "GET",
       headers: {

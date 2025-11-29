@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Message } from "@/types/message";
 import { InitialScreen } from "@/components/InitialScreen";
 import { ChatInterface } from "@/components/ChatInterface";
@@ -12,6 +12,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { ChatData } from "@/types/chatData";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import { useStreamingQuery } from "@/hooks/useStreamingQuery";
 
 export const Home = ({
   initialChatData,
@@ -42,17 +43,67 @@ export const Home = ({
     initialChatData
   );
   const { data: session } = useSession();
-  const router = useRouter();
-  const abortRef = useRef<AbortController | null>(null);
 
-  console.log({ session });
+  // Streaming state
+  const [streamingMessage, setStreamingMessage] = useState<string>("");
+  const [currentRoute, setCurrentRoute] = useState<string | null>(null);
+  const [thinkingStatus, setThinkingStatus] = useState<{
+    iteration: number;
+    tool: string;
+    collection?: string;
+    pipeline?: any[];
+    args?: any;
+  } | null>(null);
+  const [thinkingHistory, setThinkingHistory] = useState<
+    Array<{
+      iteration: number;
+      tool: string;
+      collection?: string;
+      pipeline?: any[];
+      args?: any;
+    }>
+  >([]);
+
+  const { streamQuery, cancelStream, isStreaming } = useStreamingQuery({
+    onStreamStart: () => {
+      console.log("[Streaming] Stream started - hiding loading indicator");
+      setIsLoading(false);
+    },
+    onRoute: (route) => {
+      console.log(`[Streaming] Route selected: ${route}`);
+      setCurrentRoute(route);
+    },
+    onThinking: (thinking) => {
+      console.log("[Streaming] Thinking:", thinking);
+      setThinkingStatus(thinking);
+      // Add to history if not already present
+      setThinkingHistory((prev) => {
+        const exists = prev.some(
+          (t) => t.iteration === thinking.iteration && t.tool === thinking.tool
+        );
+        return exists ? prev : [...prev, thinking];
+      });
+    },
+    onChunk: (chunk) => {
+      // Clear thinking status when actual content starts
+      setThinkingStatus(null);
+      // Update the streaming message as chunks arrive
+      setStreamingMessage((prev) => prev + chunk);
+    },
+    onComplete: (metadata) => {
+      console.log("[Streaming] Complete:", metadata);
+    },
+    onError: (error) => {
+      console.error("[Streaming] Error:", error);
+    },
+  });
 
   useEffect(() => {
     return () => {
-      // abort any ongoing fetch request when component unmounts (eg: navigating to different page)
-      abortRef.current?.abort();
+      // Cancel any ongoing stream when component unmounts
+      cancelStream();
     };
-  }, []);
+  }, [cancelStream]);
 
   useEffect(() => {
     // If a chat ID is selected, and we have preloaded data for it, use that instead
@@ -90,14 +141,56 @@ export const Home = ({
     }
   }, [initialError]);
 
-  const handleSendMessage = async (message: string) => {
-    // abort any prior fetch
-    abortRef.current?.abort();
+  // Format thinking steps as markdown string for the Reasoning component
+  const formatThinkingContent = () => {
+    let content = "";
 
-    const controller = new AbortController();
-    abortRef.current = controller;
+    // Add route selection
+    if (currentRoute) {
+      content += `**Route Selection**\n\n`;
+      content += `Using ${
+        currentRoute === "nosql" ? "Database Search" : "Vector Search"
+      }\n\n`;
+      content += `---\n\n`;
+    }
+
+    // Add thinking steps
+    thinkingHistory.forEach((step, index) => {
+      const isActive =
+        thinkingStatus?.iteration === step.iteration &&
+        thinkingStatus?.tool === step.tool;
+
+      content += `**${step.iteration}. ${step.tool}**${
+        isActive ? " ⚡" : ""
+      }\n\n`;
+
+      if (step.collection) {
+        content += `*Collection:* \`${step.collection}\`\n\n`;
+      }
+
+      if (step.pipeline && step.pipeline.length > 0) {
+        content += `*Pipeline:*\n\n`;
+        content += `\`\`\`json\n`;
+        content += JSON.stringify(step.pipeline, null, 2);
+        content += `\n\`\`\`\n\n`;
+      }
+    });
+
+    return content || "Processing...";
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (!session?.jwt) {
+      toast.error("Please login to continue", toastConfig);
+      return;
+    }
 
     setIsLoading(true);
+    setStreamingMessage(""); // Reset streaming message
+    setCurrentRoute(null);
+    setThinkingStatus(null);
+    setThinkingHistory([]);
+
     const messageWithQuestion: Message[] = [
       ...messages,
       { role: "user", content: message },
@@ -105,41 +198,19 @@ export const Home = ({
     setMessages(messageWithQuestion);
 
     try {
-      const resp = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}query`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session?.jwt}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: messageWithQuestion,
-            username: session?.user?.name,
-            chat_id: chatId,
-          }),
-          // pass the abort signal (if any) to the fetch request
-          signal: controller.signal,
-        }
+      const result = await streamQuery(
+        messageWithQuestion,
+        session.jwt,
+        chatId || undefined
       );
 
-      if (!resp.ok) {
-        throw new Error(resp.statusText);
-      }
-
-      const data = await resp.json();
-      if (!data?.response) {
-        throw new Error("Invalid response from server");
-      }
-
-      const lastIndex = data.response.length - 1;
       const isFirstMessage = messages.length === 0;
       if (isFirstMessage) {
         const timeNowUtcSeconds = Math.floor(Date.now() / 1000);
         // inserts the new chat at the top of our chat list
         setChats((prevChats) => [
           {
-            chat_id: data.chat_id,
+            chat_id: result.chatId,
             // set to lowercase for consistency with results returned by the backend
             query: message.toLowerCase(),
             created_utc: timeNowUtcSeconds,
@@ -148,11 +219,16 @@ export const Home = ({
         ]);
       }
 
-      setMessages([...messageWithQuestion, data.response[lastIndex]]);
-      setQueryId(data.query_id);
-      setChatId(data.chat_id);
-      setCurrentVote(data.user_vote);
+      // Add the complete response to messages
+      setMessages([
+        ...messageWithQuestion,
+        { role: "assistant", content: result.response },
+      ]);
+      setQueryId(result.queryId);
+      setChatId(result.chatId);
+      setCurrentVote(result.userVote);
       setIsChatOwner(true);
+      setStreamingMessage(""); // Clear streaming message after complete
     } catch (err: any) {
       if (err.name === "AbortError") {
         console.log("Request was cancelled");
@@ -165,18 +241,27 @@ export const Home = ({
           : "Unauthorised: Please login to continue";
       }
       toast.error(msg, toastConfig);
+      // Remove the user's message if there was an error
+      setMessages(messages);
     } finally {
       setIsLoading(false);
-      abortRef.current = null;
+      setStreamingMessage("");
     }
   };
+
+  // Combine actual messages with the streaming message for display
+  const displayMessages = [...messages];
+  if (isStreaming && streamingMessage) {
+    displayMessages.push({ role: "assistant", content: streamingMessage });
+  }
 
   return (
     <SidebarInset>
       <div className="flex flex-col bg-background text-foreground max-h-screen">
         <Header onBackClick={handleBackClick} />
+
         <main className="grow overflow-hidden">
-          {messages.length === 0 ? (
+          {messages.length === 0 && !isStreaming ? (
             <InitialScreen
               onSendMessage={handleSendMessage}
               isLoading={isLoading}
@@ -186,13 +271,19 @@ export const Home = ({
             <ChatInterface
               queryId={queryId}
               chatId={chatId}
-              messages={messages}
+              messages={displayMessages}
               isLoading={isLoading}
+              isStreaming={isStreaming}
               onBackClick={handleBackClick}
               onSendMessage={handleSendMessage}
               currentVote={currentVote}
               setCurrentVote={setCurrentVote}
               isChatOwner={isChatOwner}
+              showReasoning={
+                currentRoute !== null || thinkingHistory.length > 0
+              }
+              reasoningContent={formatThinkingContent()}
+              currentIteration={thinkingStatus?.iteration}
             />
           )}
         </main>

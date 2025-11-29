@@ -70,7 +70,7 @@ export const ChatProvider: React.FC<{
   };
 
   const shareChat = async (chatIdToShare: string) => {
-    const shareUrl = `${process.env.NEXT_PUBLIC_DOMAIN}chat/${chatIdToShare}`;
+    const shareUrl = `${process.env.NEXT_PUBLIC_URL}chat/${chatIdToShare}`;
     console.log({ shareUrl });
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -83,14 +83,13 @@ export const ChatProvider: React.FC<{
   const deleteChat = async (chatIdToDelete: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}chat/${chatIdToDelete}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${session?.jwt}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ chat_id: chatIdToDelete }),
         }
       );
       if (!response.ok) {

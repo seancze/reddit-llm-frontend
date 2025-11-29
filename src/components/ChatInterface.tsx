@@ -11,17 +11,27 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { toastConfig } from "@/app/utils/constants";
 import { LinkPreview } from "@/components/LinkPreview";
+import {
+  Reasoning,
+  ReasoningTrigger,
+  ReasoningContent,
+} from "@/components/ui/shadcn-io/ai/reasoning";
 
 interface ChatInterfaceProps {
   queryId: string;
   chatId: string;
   messages: Message[];
   isLoading: boolean;
+  isStreaming?: boolean;
   onBackClick: () => void;
   onSendMessage: (message: string) => void;
   currentVote: -1 | 0 | 1;
   setCurrentVote: React.Dispatch<React.SetStateAction<-1 | 0 | 1>>;
   isChatOwner: boolean;
+  // Reasoning props
+  showReasoning?: boolean;
+  reasoningContent?: string;
+  currentIteration?: number;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
@@ -29,11 +39,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   chatId,
   messages,
   isLoading,
+  isStreaming = false,
   onBackClick,
   onSendMessage,
   currentVote,
   setCurrentVote,
   isChatOwner,
+  showReasoning = false,
+  reasoningContent = "",
+  currentIteration,
 }) => {
   const { data: session } = useSession();
 
@@ -84,7 +98,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onClick={onBackClick}
             className="mb-4 rounded-full text-secondary-foreground"
             aria-label="Back to start"
-            disabled={isLoading}
+            disabled={isLoading || isStreaming}
             size="icon"
           >
             <FaArrowLeft />
@@ -92,22 +106,39 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
           <div className="space-y-4">
             {messages.map((message, i) => (
-              <div
-                key={i}
-                className={`p-4 rounded-lg shadow-md ${
-                  message.role === "user"
-                    ? "bg-primary"
-                    : "border text-secondary-foreground bg-secondary"
-                }`}
-              >
-                <Markdown
-                  className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline overflow-auto"
-                  remarkPlugins={[remarkGfm]}
-                  components={components}
+              <React.Fragment key={i}>
+                <div
+                  className={`p-4 rounded-lg shadow-md ${
+                    message.role === "user"
+                      ? "bg-primary"
+                      : "border text-secondary-foreground bg-secondary"
+                  }`}
                 >
-                  {formatMessageContent(message.content)}
-                </Markdown>
-              </div>
+                  <Markdown
+                    className="prose-invert max-w-none prose-a:no-underline hover:prose-a:underline overflow-auto"
+                    remarkPlugins={[remarkGfm]}
+                    components={components}
+                  >
+                    {formatMessageContent(message.content)}
+                  </Markdown>
+                </div>
+
+                {/* Show reasoning after the last user message */}
+                {message.role === "user" &&
+                  i === messages.findLastIndex((m) => m.role === "user") &&
+                  showReasoning &&
+                  reasoningContent && (
+                    <div className="my-4">
+                      <Reasoning
+                        isLoading={isLoading}
+                        currentIteration={currentIteration}
+                      >
+                        <ReasoningTrigger title="Thinking" />
+                        <ReasoningContent>{reasoningContent}</ReasoningContent>
+                      </Reasoning>
+                    </div>
+                  )}
+              </React.Fragment>
             ))}
           </div>
 
@@ -117,20 +148,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           )}
           {/* only show feedback button when response from AI is generated; this happens when messages.length is even */}
-          {!isLoading && session && messages.length % 2 === 0 && (
-            <FeedbackButtons
-              queryId={queryId}
-              chatId={chatId}
-              currentVote={currentVote}
-              setCurrentVote={setCurrentVote}
-            />
-          )}
+          {!isLoading &&
+            !isStreaming &&
+            session &&
+            messages.length % 2 === 0 && (
+              <FeedbackButtons
+                queryId={queryId}
+                chatId={chatId}
+                currentVote={currentVote}
+                setCurrentVote={setCurrentVote}
+              />
+            )}
         </div>
       </div>
 
       <ChatBox
         onSend={onSendMessage}
         isLoading={isLoading}
+        isStreaming={isStreaming}
         isChatOwner={isChatOwner}
       />
     </div>
