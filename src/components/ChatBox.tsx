@@ -14,6 +14,7 @@ import * as Yup from "yup";
 interface ChatBoxProps {
   onSend: (message: string) => void;
   isLoading: boolean;
+  isStreaming?: boolean;
   isChatOwner: boolean;
 }
 
@@ -24,6 +25,7 @@ const validationSchema = Yup.object().shape({
 export const ChatBox: React.FC<ChatBoxProps> = ({
   onSend,
   isLoading,
+  isStreaming = false,
   isChatOwner,
 }: ChatBoxProps) => {
   const { data: session } = useSession();
@@ -32,14 +34,14 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     values: { query: string },
     { resetForm }: { resetForm: () => void }
   ) => {
-    if (values.query.trim() && !isLoading && session) {
+    if (values.query.trim() && !isLoading && !isStreaming && session) {
       // reset the form first to clear the input field in the frontend
       resetForm();
       await onSend(values.query);
     }
   };
 
-  const isDisabled = !(session && isChatOwner && !isLoading);
+  const isDisabled = !(session && isChatOwner && !isLoading && !isStreaming);
   return (
     <Formik
       initialValues={{ query: "" }}
