@@ -68,7 +68,6 @@ export const AppSidebar = () => {
   } = useInfiniteQuery({
     queryKey: ["chats"],
     queryFn: async ({ pageParam = 0 }) => {
-      console.log({ pageParam });
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}chat?page=${pageParam}`,
         {
@@ -84,7 +83,6 @@ export const AppSidebar = () => {
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      console.log({ lastPage, allPages });
       // if you get back an empty array, there is no next page
       if (lastPage.length === 0) {
         return undefined;
