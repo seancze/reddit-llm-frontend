@@ -37,6 +37,7 @@ export const Home = ({
     setCurrentVote,
     resetChatState,
     handleBackClick,
+    setStreamCanceller,
   } = useChatContext();
   const [isLoading, setIsLoading] = useState(false);
   const [chatData, setChatData] = useState<ChatData | undefined>(
@@ -97,6 +98,12 @@ export const Home = ({
       console.error("[Streaming] Error:", error);
     },
   });
+
+  // when the cancelStream function loads
+  // set it in the ChatContext so that we can cancel the stream using the handleBackClick function
+  useEffect(() => {
+    setStreamCanceller(() => cancelStream);
+  }, [cancelStream, setStreamCanceller]);
 
   useEffect(() => {
     return () => {

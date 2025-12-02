@@ -28,6 +28,7 @@ interface ChatContextType {
   handleBackClick: () => void;
   shareChat: (chatId: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
+  setStreamCanceller: React.Dispatch<React.SetStateAction<(() => void) | null>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -42,6 +43,9 @@ export const ChatProvider: React.FC<{
   const [isChatOwner, setIsChatOwner] = useState(true);
   const [currentVote, setCurrentVote] = useState<-1 | 0 | 1>(0);
   const [chats, setChats] = useState<ChatOverview[]>([]);
+  const [streamCanceller, setStreamCanceller] = useState<(() => void) | null>(
+    null
+  );
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -58,6 +62,11 @@ export const ChatProvider: React.FC<{
   }, []);
 
   const handleBackClick = () => {
+    // Cancel any ongoing streaming request
+    if (streamCanceller) {
+      streamCanceller();
+    }
+
     if (pathname === "/") {
       // if the user is already on the home page, explicitly reset the chat state
       // used when user clicks back from a cached chat (i.e. one of the example questions) or a new chat
@@ -131,6 +140,7 @@ export const ChatProvider: React.FC<{
         handleBackClick,
         shareChat,
         deleteChat,
+        setStreamCanceller,
       }}
     >
       {children}
