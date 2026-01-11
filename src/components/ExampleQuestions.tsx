@@ -21,6 +21,12 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
   const { data: session } = useSession();
   const { setChatId } = useChatContext();
 
+  const entries = Object.entries(questionsDict);
+  // Repeats the list to ensure the total width exceeds the screen width.
+  // This is required by Embla Carousel to enable seamless infinite looping.
+  // 7 items * ~176px = ~1232px. 4x covers ~4900px (supports up to 5k screens).
+  const repeatedEntries = Array(4).fill(entries).flat();
+
   const onQuestionClick = (question: string, key: string) => {
     if (session) {
       onSendMessage(question);
@@ -32,16 +38,17 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
       setChatId(key);
     }
   };
+
   return (
     <div className="flex size-full items-center justify-center bg-background">
       <Marquee>
         <MarqueeFade side="left" />
         <MarqueeFade side="right" />
-        <MarqueeContent pauseOnHover={false}>
-          {Object.entries(questionsDict).map(([key, question]) => {
+        <MarqueeContent pauseOnHover={true} loop={true} speed={1}>
+          {repeatedEntries.map(([key, question], index) => {
             return (
               <MarqueeItem
-                key={key}
+                key={`${key}-${index}`}
                 className="h-24 w-40 text-xs hover:cursor-pointer border-0 rounded-lg flex items-center justify-center px-2 bg-primary hover:bg-primary/90"
                 onClick={() => onQuestionClick(question, key)}
               >
