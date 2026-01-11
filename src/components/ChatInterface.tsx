@@ -91,7 +91,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [session]);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto px-4">
+    <div className="flex flex-col h-screen max-w-4xl sm:max-w-3/4 mx-auto px-4">
       <div className="grow overflow-y-auto pb-4">
         <div className="w-full py-6 px-2">
           <Button
