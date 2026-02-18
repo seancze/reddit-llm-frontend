@@ -69,7 +69,7 @@ export const AppSidebar = () => {
     queryKey: ["chats"],
     queryFn: async ({ pageParam = 0 }) => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}chat?page=${pageParam}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}chats?page=${pageParam}`,
         {
           headers: { Authorization: `Bearer ${session?.jwt}` },
         }

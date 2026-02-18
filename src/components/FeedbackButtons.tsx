@@ -45,7 +45,7 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
       async (queryId: string, vote: -1 | 0 | 1, username: string) => {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}vote`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}votes`,
             {
               method: "PUT",
               headers: {

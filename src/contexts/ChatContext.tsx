@@ -92,7 +92,7 @@ export const ChatProvider: React.FC<{
   const deleteChat = async (chatIdToDelete: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}chat/${chatIdToDelete}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}chats/${chatIdToDelete}`,
         {
           method: "DELETE",
           headers: {

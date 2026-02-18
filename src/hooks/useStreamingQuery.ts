@@ -60,7 +60,7 @@ export function useStreamingQuery(options: UseStreamingQueryOptions = {}) {
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}query/stream`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}queries/stream`,
           {
             method: "POST",
             headers: {
